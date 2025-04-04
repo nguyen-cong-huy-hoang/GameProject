@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 #include <string>
 #include <vector>
+#include <iostream>
 #include "BaseObject.h"
 #include <stdio.h>
 static SDL_Window* g_window = NULL;

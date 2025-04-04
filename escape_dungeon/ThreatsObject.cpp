@@ -145,7 +145,7 @@ void ThreatsObject :: DoPlayer(Map& gMap)
         come_back_time --;
         if(come_back_time == 0)
         {
-           x_val = 0;
+        x_val = 0;
         y_val = 0;
         if(x_pos > 256)
         {
@@ -156,7 +156,9 @@ void ThreatsObject :: DoPlayer(Map& gMap)
         else{
             x_pos = 0;
         }
-        y_pos = 0;
+        int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 2;
+        int ground_y = tile_y * TILE_SIZE;
+        y_pos = ground_y - get_height_frame();
         come_back_time = 0;
         input_type.left = 1;
         }
@@ -171,7 +173,7 @@ void ThreatsObject :: checkToMap(Map& gMap)
     int y2 = 0; // vi tri hang ben duoi cua nhan vat
 
     // Kiem tra va cham ngang
-    int height_min = height_frame > TILE_SIZE ? height_frame : TILE_SIZE;
+    int height_min = height_frame < TILE_SIZE ? height_frame : TILE_SIZE;
 
     x1 = (x_pos + x_val) / TILE_SIZE;
     x2 = (x_pos + width_frame + x_val - 1) / TILE_SIZE;
@@ -187,6 +189,7 @@ void ThreatsObject :: checkToMap(Map& gMap)
 
                 x_pos = x2 * TILE_SIZE - (width_frame+ 1); // Dung ngay truoc vat can
                 x_val = 0;
+
             }
         }
         else if (x_val < 0) // Di chuyen sang trai
@@ -195,6 +198,7 @@ void ThreatsObject :: checkToMap(Map& gMap)
             {
                 x_pos = (x1 + 1) * TILE_SIZE; // Dung ngay sau vat can
                 x_val = 0;
+
             }
 
         }
@@ -230,6 +234,8 @@ void ThreatsObject :: checkToMap(Map& gMap)
         }
     }
 
+
+
     x_pos += x_val;
     y_pos += y_val;
 
@@ -257,14 +263,17 @@ void ThreatsObject :: ImpMoveType(SDL_Renderer * screen)
     else{
         if(on_ground == true)
         {
-            if(x_pos > animation_b)
+
+            if(x_pos > animation_b )
             {
+
                 input_type.left = 1;
                 input_type.right = 0;
                 LoadImg("img//test1.png" , screen);
             }
             else if(x_pos < animation_a)
             {
+
                 input_type.left = 0;
                 input_type.right = 1;
                 LoadImg("img//test2.png" , screen);
@@ -277,6 +286,8 @@ void ThreatsObject :: ImpMoveType(SDL_Renderer * screen)
             }
         }
     }
+
+
 }
 
 

@@ -54,47 +54,34 @@ void close() {
 std :: vector<ThreatsObject*> MakeThreatdList()
 {
     std :: vector<ThreatsObject*> list_threats;
-
-
     ThreatsObject* dynamic_threats = new ThreatsObject[20];
     for(int i = 0; i < 20 ;i++)
      {
          ThreatsObject* p_threat = (dynamic_threats + i);
-         if(p_threat != NULL)
-         {
-             p_threat->LoadImg("img//test1.png" , g_screen);
-             p_threat->set_clips();
-             p_threat->set_type_move(ThreatsObject :: MOVE_IN_SPACE_THREAT);
-             p_threat->set_x_pos(500 +i*500);
-             p_threat->set_y_pos(200);
-             int pos1 = p_threat->get_x_pos() - 60;
-             int pos2 = p_threat->get_y_pos() + 60;
-             p_threat->SetAnimationPos(pos1 , pos2);
-              p_threat->set_input_left(1);
-             list_threats.push_back(p_threat);
+        if(p_threat != NULL)
+        {
+            p_threat->LoadImg("img//test1.png", g_screen);
+            p_threat->set_clips();
+            p_threat->set_type_move(ThreatsObject::MOVE_IN_SPACE_THREAT);
+            p_threat->set_x_pos(500 + i * 500);
+
+            // xac dinh vi tri mat dat
+            int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 2;
+            int ground_y = tile_y * TILE_SIZE;
+            p_threat->set_y_pos(ground_y - p_threat->get_height_frame());
+
+            // dat vung di chuyen
+            int pos1 = p_threat->get_x_pos() - 100.0;
+            int pos2 = p_threat->get_x_pos() + 100.0;
+            p_threat->SetAnimationPos(pos1, pos2);
+            p_threat->set_input_left(1);
+
+
+            list_threats.push_back(p_threat);
 
          }
      }
 
-
-
-
-    ThreatsObject* threats_objs = new ThreatsObject[20];
-
-    for(int i = 0 ;i < 20 ; i++)
-    {
-        ThreatsObject* p_threat = (threats_objs + i);
-        if(p_threat != NULL)
-        {
-            p_threat->LoadImg("img//test.png" , g_screen);
-            p_threat->set_clips();
-            p_threat->set_x_pos(700 + i*1200);
-            p_threat->set_y_pos(250);
-            p_threat->set_type_move(ThreatsObject :: STATIC_THREAT);
-
-            list_threats.push_back(p_threat);
-        }
-    }
     return list_threats;
 
 }
@@ -103,14 +90,14 @@ int main(int argc, char* argv[]) {
     Time fps_timer;
     if (!InitData()) return -1;
     if (!loadbackground()) return -1;
-    std:: vector<ThreatsObject*> threats_list = MakeThreatdList();
+
     GameMap loadmap;
     loadmap.LoadMap("map//map01.dat");
     loadmap.LoadTiles(g_screen);
     PlayerObject p_player;
     p_player.LoadImg("img//player_right.png" , g_screen);
     p_player.set_clips();
-
+     std:: vector<ThreatsObject*> threats_list = MakeThreatdList();
 
 
     bool quit = false;
