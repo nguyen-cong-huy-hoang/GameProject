@@ -43,6 +43,8 @@
 		<Unit filename="GameMap.h" />
 		<Unit filename="PlayerObject.cpp" />
 		<Unit filename="PlayerObject.h" />
+		<Unit filename="TextObject.cpp" />
+		<Unit filename="TextObject.h" />
 		<Unit filename="ThreatsObject.cpp" />
 		<Unit filename="ThreatsObject.h" />
 		<Unit filename="Time.cpp" />

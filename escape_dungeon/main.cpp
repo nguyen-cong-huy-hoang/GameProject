@@ -3,8 +3,10 @@
 #include "Time.h"
 #include "PlayerObject.h"
 #include "ThreatsObject.h"
+#include "TextObject.h"
 BaseObject loadBackground;
 
+TTF_Font* font_time = NULL;
 
 
 bool InitData() {
@@ -32,11 +34,20 @@ bool InitData() {
     }
 
     SDL_SetRenderDrawColor(g_screen, 255, 255, 255, 255);
+    if(TTF_Init() == -1) return false;
+    else{
+        font_time = TTF_OpenFont("font//dlxfont_.ttf" , 15);
+        if(font_time == NULL)
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 
 bool loadbackground() {
-    bool des = loadBackground.LoadImg("img//background.jpg", g_screen);
+    bool des = loadBackground.LoadImg("img//country-platform-preview.png", g_screen);
     if (!des) return false;
     return true;
 }
@@ -71,12 +82,13 @@ std :: vector<ThreatsObject*> MakeThreatdList()
             p_threat->set_y_pos(ground_y - p_threat->get_height_frame());
 
             // dat vung di chuyen
-            int pos1 = p_threat->get_x_pos() - 100.0;
-            int pos2 = p_threat->get_x_pos() + 100.0;
+            int pos1 = p_threat->get_x_pos() - 50.0;
+            int pos2 = p_threat->get_x_pos() + 50.0;
             p_threat->SetAnimationPos(pos1, pos2);
             p_threat->set_input_left(1);
 
-
+            BulletObject* p_bullet = new BulletObject();
+            p_threat->InitBullet(p_bullet , g_screen);
             list_threats.push_back(p_threat);
 
          }
@@ -98,6 +110,9 @@ int main(int argc, char* argv[]) {
     p_player.LoadImg("img//player_right.png" , g_screen);
     p_player.set_clips();
      std:: vector<ThreatsObject*> threats_list = MakeThreatdList();
+
+     TextObject time_game;
+     time_game.SetColor(TextObject :: BLACK_TEXT);
 
 
     bool quit = false;
@@ -134,11 +149,98 @@ int main(int argc, char* argv[]) {
                 p_threat->SetMapXY(map_data.start_x , map_data.start_y);
                 p_threat->ImpMoveType(g_screen);
                 p_threat->DoPlayer(map_data);
-                p_threat->show(g_screen);
-            }
 
+                p_threat->MakeBullet(g_screen ,SCREEN_WIDTH , SCREEN_HEIGHT);
+                p_threat->show(g_screen);
+
+
+                SDL_Rect rect_player = p_player.GetRectFrame();
+                bool bCol1 = false;
+                std :: vector<BulletObject*>  tBullet_list = p_threat->get_bullet_list();
+                for(int jj = 0 ; jj < tBullet_list.size() ; jj++)
+                {
+                    BulletObject* pt_bullet = tBullet_list.at(jj);
+                    if(pt_bullet != NULL)
+                    {
+                        bCol1 = SDLCommonFunc ::CheckCollision(pt_bullet->GetRect() , rect_player);
+                        if(bCol1)
+                        {
+                            p_threat->removeBullet(jj);
+                            break;
+                        }
+                    }
+                }
+
+                SDL_Rect rect_threat = p_threat->GetRectFrame();
+                bool bCol2 = SDLCommonFunc :: CheckCollision(rect_player , rect_threat);
+
+                if(bCol1 || bCol2)
+                {
+                   if(MessageBoxW(NULL , L"GAME OVER" , L"Info" ,  MB_OK | MB_ICONSTOP) == IDOK)
+                   {
+                    p_threat->Free();
+                    close();
+                    SDL_Quit();
+                    return 0;
+                   }
+                }
+
+            }
         }
 
+        std :: vector<BulletObject*> bullet_arr = p_player.get_bullet_list();
+        for(int bl = 0 ; bl < bullet_arr.size() ; bl++)
+        {
+            BulletObject* p_bullet = bullet_arr.at(bl);
+            if(p_bullet != NULL)
+            {
+                for(int t = 0; t < threats_list.size() ;t++)
+                {
+                    ThreatsObject* obj_threat = threats_list.at(t);
+                    if(obj_threat != NULL)
+                    {
+                        SDL_Rect tRect;
+                        tRect.x = obj_threat->GetRect().x;
+                        tRect.y = obj_threat->GetRect().y;
+                        tRect.w = obj_threat->get_height_frame();
+                        tRect.h = obj_threat->get_width_frame();
+
+                        SDL_Rect bRect = p_bullet->GetRect();
+
+                        bool bCol = SDLCommonFunc :: CheckCollision(bRect , tRect);
+                        if(bCol)
+                        {
+                            p_player.removeBullet(bl);
+                            obj_threat->Free();
+                            threats_list.erase(threats_list.begin() + t);
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //show game time
+        std :: string str_time = "Time: ";
+        Uint32 time_val = SDL_GetTicks()/1000;
+        Uint32 val_time = 300 - time_val;
+        if(val_time <= 0)
+        {
+             if(MessageBoxW(NULL , L"GAME OVER" , L"Info" ,  MB_OK | MB_ICONSTOP) == IDOK)
+                   {
+
+                    quit = true;
+                    break;
+                   }
+                   else{
+                    std :: string str_val = std :: to_string(val_time);
+                    str_time += str_val;
+                    time_game.SetText(str_time);
+                    time_game.LoadFromRenderText(font_time , g_screen);
+                    time_game.RenderText(g_screen , SCREEN_WIDTH - 200 , 15);
+                   }
+        }
         SDL_RenderPresent(g_screen);
 
         int real_imp_time = fps_timer.get_ticks();
@@ -151,6 +253,16 @@ int main(int argc, char* argv[]) {
             SDL_Delay(delay_time);
         }
     }
+    for(int i = 0 ;i < threats_list.size();i++)
+    {
+        ThreatsObject* p_threat = threats_list.at(i);
+        if(p_threat)
+        {
+            p_threat->Free();
+            p_threat = NULL;
+        }
+    }
+    threats_list.clear();
     close();
     return 0;
 }

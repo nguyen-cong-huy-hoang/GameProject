@@ -37,6 +37,17 @@ bool PlayerObject ::LoadImg(std:: string path , SDL_Renderer * screen)
     return ret;
 }
 
+SDL_Rect PlayerObject :: GetRectFrame()
+{
+    SDL_Rect rect;
+    rect.x = rect_.x;
+    rect.y = rect_.y;
+    rect.w = width_frame;
+    rect.h = height_frame;
+
+    return rect;
+}
+
 void PlayerObject :: set_clips()
 {
 
@@ -239,6 +250,23 @@ void PlayerObject:: HandleBullet(SDL_Renderer* des)
         }
     }
 }
+
+
+void PlayerObject :: removeBullet(const int& idx)
+{
+    int size = p_bullet_list.size();
+    if(size > 0 && idx < size )
+    {
+        BulletObject * p_bullet = p_bullet_list.at(idx);
+        p_bullet_list.erase(p_bullet_list.begin() +idx);
+
+        if(p_bullet)
+        {
+            delete p_bullet;
+            p_bullet = NULL;
+        }
+    }
+}
 void PlayerObject :: DoPlayer(Map& map_data)
 {
     x_val = 0;
@@ -417,7 +445,6 @@ void PlayerObject :: CheckToMap(Map& map_data)
         x_pos = map_data.max_x - width_frame - 1;
     }
 }
-
 
 
 

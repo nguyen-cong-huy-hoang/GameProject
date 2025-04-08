@@ -39,7 +39,7 @@ public:
 
     void set_bullet_type(const unsigned int& bulletType){bullet_type =bulletType;}
     unsigned int get_bullet_type() const {return bullet_type;}
-    void LoadImageBullet(SDL_Renderer* des);
+    bool LoadImageBullet(SDL_Renderer* des);
 private:
     int x_val; // van toc theo truc x
     int y_val; // van toc theo truc y

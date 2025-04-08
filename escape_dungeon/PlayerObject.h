@@ -40,6 +40,8 @@ public:
     void setMapXY(const int map_x_ , const int map_y_){map_x = map_x_ ; map_y = map_y_;} // dat  toa do nhan vat trong map
     void CenterEnityOnMap(Map& map_data); // di chuyen man hinh theo nhan vat
 
+
+    SDL_Rect GetRectFrame();
     void set_bullet_list(std:: vector<BulletObject*> bullet_list) // thiet lap dan cho nhan vat
     {
         p_bullet_list = bullet_list;
@@ -47,6 +49,7 @@ public:
     std:: vector<BulletObject*> get_bullet_list() const {return p_bullet_list;} // lay ra dan
 
     void HandleBullet(SDL_Renderer* des);
+    void removeBullet(const int& idx);
 
 private:
 

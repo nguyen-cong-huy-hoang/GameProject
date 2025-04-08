@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -50,6 +51,12 @@ typedef struct Input
     int down ;
     int up;
 };
+
+
+namespace SDLCommonFunc
+{
+    bool CheckCollision(const SDL_Rect& object1 , const SDL_Rect& object2);
+}
 
 
 

@@ -1,18 +1,20 @@
 # depslib dependency file v1.0
-1743691821 source:e:\gameproject\escape_dungeon\main.cpp
+1744125430 source:e:\gameproject\escape_dungeon\main.cpp
 	"CommonFunc.h"
 	"GameMap.h"
 	"Time.h"
 	"PlayerObject.h"
 	"ThreatsObject.h"
+	"TextObject.h"
 
-1742047713 source:e:\gameproject\escape_dungeon\commonfunc.cpp
+1744116867 source:e:\gameproject\escape_dungeon\commonfunc.cpp
 	"CommonFunc.h"
 
-1743689529 e:\gameproject\escape_dungeon\commonfunc.h
+1744122261 e:\gameproject\escape_dungeon\commonfunc.h
 	<windows.h>
 	<SDL.h>
 	<SDL_image.h>
+	<SDL_ttf.h>
 	<string>
 	<vector>
 	<iostream>
@@ -32,14 +34,14 @@
 	"CommonFunc.h"
 	"BaseObject.h"
 
-1743169820 e:\gameproject\escape_dungeon\playerobject.h
+1744118473 e:\gameproject\escape_dungeon\playerobject.h
 	"CommonFunc.h"
 	"BaseObject.h"
 	"GameMap.h"
 	"BulletObject.h"
 	<vector>
 
-1743172025 source:e:\gameproject\escape_dungeon\playerobject.cpp
+1744119372 source:e:\gameproject\escape_dungeon\playerobject.cpp
 	"PlayerObject.h"
 
 1743081607 source:e:\gameproject\escape_dungeon\time.cpp
@@ -48,17 +50,24 @@
 
 1743081611 e:\gameproject\escape_dungeon\time.h
 
-1743171687 source:e:\gameproject\escape_dungeon\bulletobject.cpp
+1744038300 source:e:\gameproject\escape_dungeon\bulletobject.cpp
 	"BulletObject.h"
 
-1743171493 e:\gameproject\escape_dungeon\bulletobject.h
+1744038359 e:\gameproject\escape_dungeon\bulletobject.h
 	"CommonFunc.h"
 	"BaseObject.h"
 
-1743689529 e:\gameproject\escape_dungeon\threatsobject.h
+1744118956 e:\gameproject\escape_dungeon\threatsobject.h
 	"CommonFunc.h"
 	"BaseObject.h"
+	"BulletObject.h"
 
-1743777450 source:e:\gameproject\escape_dungeon\threatsobject.cpp
+1744119372 source:e:\gameproject\escape_dungeon\threatsobject.cpp
 	"ThreatsObject.h"
+
+1744124116 source:e:\gameproject\escape_dungeon\textobject.cpp
+	"TextObject.h"
+
+1744123956 e:\gameproject\escape_dungeon\textobject.h
+	"CommonFunc.h"
 

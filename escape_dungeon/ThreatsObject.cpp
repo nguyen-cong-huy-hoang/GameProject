@@ -44,6 +44,18 @@ bool ThreatsObject :: LoadImg(std :: string path , SDL_Renderer* screen)
 }
 
 
+SDL_Rect ThreatsObject :: GetRectFrame()
+{
+    SDL_Rect rect;
+    rect.x = rect_.x;
+    rect.y = rect_.y;
+    rect.w = width_frame;
+    rect.h = height_frame;
+
+    return rect;
+}
+
+
 void ThreatsObject :: set_clips()
 {
     if(width_frame > 0 && height_frame > 0)
@@ -116,6 +128,21 @@ void ThreatsObject :: show(SDL_Renderer* des)
 }
 
 
+void ThreatsObject :: removeBullet(const int& idx)
+{
+    int size = bullet_list.size();
+    if(size > 0 && idx < size )
+    {
+        BulletObject * p_bullet = bullet_list.at(idx);
+        bullet_list.erase(bullet_list.begin() +idx);
+
+        if(p_bullet)
+        {
+            delete p_bullet;
+            p_bullet = NULL;
+        }
+    }
+}
 
 
 void ThreatsObject :: DoPlayer(Map& gMap)
@@ -188,6 +215,7 @@ void ThreatsObject :: checkToMap(Map& gMap)
             {
 
                 x_pos = x2 * TILE_SIZE - (width_frame+ 1); // Dung ngay truoc vat can
+
                 x_val = 0;
 
             }
@@ -197,6 +225,7 @@ void ThreatsObject :: checkToMap(Map& gMap)
             if (gMap.tile[y1][x1] != BLANK_TILE || gMap.tile[y2][x1] != BLANK_TILE)
             {
                 x_pos = (x1 + 1) * TILE_SIZE; // Dung ngay sau vat can
+
                 x_val = 0;
 
             }
@@ -263,20 +292,21 @@ void ThreatsObject :: ImpMoveType(SDL_Renderer * screen)
     else{
         if(on_ground == true)
         {
-
             if(x_pos > animation_b )
             {
 
                 input_type.left = 1;
                 input_type.right = 0;
                 LoadImg("img//test1.png" , screen);
+
             }
-            else if(x_pos < animation_a)
+            else if(x_pos < animation_a )
             {
 
                 input_type.left = 0;
                 input_type.right = 1;
                 LoadImg("img//test2.png" , screen);
+
             }
         }
         else{
@@ -288,6 +318,57 @@ void ThreatsObject :: ImpMoveType(SDL_Renderer * screen)
     }
 
 
+}
+
+void ThreatsObject:: InitBullet(BulletObject* p_bullet,SDL_Renderer * screen)
+{
+
+    if(p_bullet != NULL)
+    {
+        p_bullet->set_bullet_type(BulletObject :: LASER_BULLET);
+
+        bool res = p_bullet->LoadImageBullet(screen);
+        if(res)
+        {
+        p_bullet->set_is_move(true);
+        p_bullet->set_bullet_dir(BulletObject :: DIR_LEFT);
+        p_bullet->SetRect(rect_.x + 5 , y_pos + 20);
+        p_bullet->set_x_val(15);
+        bullet_list.push_back(p_bullet);
+        }
+    }
+
+}
+
+void ThreatsObject:: MakeBullet(SDL_Renderer * screen , const int& x_limit , const int& y_limit)
+{
+
+    for(int i = 0 ;i < bullet_list.size() ;i++ )
+    {
+        BulletObject* p_bullet = bullet_list.at(i);
+        if(p_bullet != NULL)
+        {
+            if(p_bullet->get_is_move())
+            {
+                int bullet_distancce = rect_.x + width_frame - p_bullet->GetRect().x;
+                if(bullet_distancce < 300 && bullet_distancce > 0)
+                {
+
+
+                p_bullet->HandleMove(x_limit, y_limit);
+                p_bullet->Render(screen);
+                }
+                else{
+                    p_bullet->set_is_move(false);
+                }
+            }
+            else
+            {
+                p_bullet->set_is_move(true);
+                p_bullet->SetRect(rect_.x + 5 , y_pos + 20);
+            }
+        }
+    }
 }
 
 

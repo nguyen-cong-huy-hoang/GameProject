@@ -6,7 +6,7 @@
 
 #include "CommonFunc.h"
 #include "BaseObject.h"
-
+#include "BulletObject.h"
 #define THREAT_SPEED 5
 #define THREAT_GRAVITY_SPEED 0.8
 #define THREAT_MAX_FALL_SPEED 10
@@ -16,6 +16,7 @@ class ThreatsObject : public BaseObject
 public:
     ThreatsObject();
     ~ThreatsObject();
+
 
     enum TypeMove
     {
@@ -40,11 +41,18 @@ public:
     void DoPlayer(Map& gMap);
     void checkToMap(Map& gMap);
 
+    SDL_Rect GetRectFrame();
+
     void set_type_move(const int& typeMove){type_move = typeMove;}
     void SetAnimationPos(const int& pos_a , const int& pos_b){animation_a = pos_a ; animation_b = pos_b;}
     void set_input_left(const int& ipleft ){input_type.left = ipleft;};
     void ImpMoveType(SDL_Renderer * screen);
 
+    std :: vector<BulletObject*> get_bullet_list()const{return bullet_list;}
+    void set_bullet_list(const std:: vector<BulletObject*>& bl_list){bullet_list = bl_list;}
+    void InitBullet(BulletObject* p_bullet , SDL_Renderer *screen);
+    void MakeBullet(SDL_Renderer * screen , const int& x_limit , const int& y_limit);
+    void removeBullet(const int& idx);
 
 private:
     int frame;
@@ -59,11 +67,13 @@ private:
     float y_val;
     int map_x;
     int map_y;
-
+    int direction;
     int type_move;
     int animation_a;
     int animation_b;
     Input input_type;
+
+    std :: vector<BulletObject*> bullet_list;
 
 };
 

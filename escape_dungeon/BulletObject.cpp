@@ -17,16 +17,18 @@ BulletObject :: ~BulletObject()
 
 }
 
-void BulletObject :: LoadImageBullet(SDL_Renderer* des)
+bool BulletObject :: LoadImageBullet(SDL_Renderer* des)
 {
+    bool res = false;
     if(bullet_type == LASER_BULLET)
     {
-        LoadImg("img//laser_bullet.png",des);
+        res = LoadImg("img//laser_bullet.png",des);
     }
     else
     {
-        LoadImg("img//dan_ban.png" , des);
+        res =LoadImg("img//dan_ban.png" , des);
     }
+    return res;
 }
 
 void BulletObject :: HandleMove(const int& x_border , const int& y_border)
