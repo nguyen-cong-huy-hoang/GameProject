@@ -32,7 +32,7 @@ bool ThreatsObject :: LoadImg(std :: string path , SDL_Renderer* screen)
     bool ret = BaseObject :: LoadImg(path , screen);
 
     if (!ret) {
-     printf("Error loading image: %s\n", SDL_GetError());
+
     }
     if(ret)
     {
@@ -61,90 +61,19 @@ void ThreatsObject :: set_clips()
     if(width_frame > 0 && height_frame > 0)
     {
 
-        frame_clip[0].x = 0;
-        frame_clip[0].y = 0;
-        frame_clip[0].w = width_frame;
-        frame_clip[0].h = height_frame;
-
-        frame_clip[1].x = width_frame;
-        frame_clip[1].y = 0;
-        frame_clip[1].w = width_frame;
-        frame_clip[1].h = height_frame;
-
-        frame_clip[2].x = 2*width_frame;
-        frame_clip[2].y = 0;
-        frame_clip[2].w = width_frame;
-        frame_clip[2].h = height_frame;
-
-        frame_clip[3].x = 3*width_frame;
-        frame_clip[3].y = 0;
-        frame_clip[3].w = width_frame;
-        frame_clip[3].h = height_frame;
-
-        frame_clip[4].x = 4*width_frame;
-        frame_clip[4].y = 0;
-        frame_clip[4].w = width_frame;
-        frame_clip[4].h = height_frame;
-
-        frame_clip[5].x = 5*width_frame;
-        frame_clip[5].y = 0;
-        frame_clip[5].w = width_frame;
-        frame_clip[5].h = height_frame;
-
-        frame_clip[6].x = 6*width_frame;
-        frame_clip[6].y = 0;
-        frame_clip[6].w = width_frame;
-        frame_clip[6].h = height_frame;
-
-        frame_clip[7].x = 7*width_frame;
-        frame_clip[7].y = 0;
-        frame_clip[7].w = width_frame;
-        frame_clip[7].h = height_frame;
-    }
-
-
-
-
-}
-
-
-void ThreatsObject :: show(SDL_Renderer* des)
-{
-    if(come_back_time == 0)
-    {
-        rect_.x = x_pos - map_x;
-        rect_.y = y_pos - map_y;
-        frame ++;
-        if(frame >= 8)
+        for(int i = 0 ;i < THREAT_FRAME_NUM ; i++)
         {
-            frame = 0;
-        }
-        SDL_Rect* currentClip = &frame_clip[frame];
-        SDL_Rect rendQuad = {rect_.x , rect_.y , width_frame , height_frame};
-        SDL_RenderCopy(des , p_object , currentClip , &rendQuad);
-
-    }
-
-}
-
-
-void ThreatsObject :: removeBullet(const int& idx)
-{
-    int size = bullet_list.size();
-    if(size > 0 && idx < size )
-    {
-        BulletObject * p_bullet = bullet_list.at(idx);
-        bullet_list.erase(bullet_list.begin() +idx);
-
-        if(p_bullet)
-        {
-            delete p_bullet;
-            p_bullet = NULL;
+            frame_clip[i].x = i*width_frame;
+            frame_clip[i].y = 0;
+            frame_clip[i].w = width_frame;
+            frame_clip[i].h = height_frame;
         }
     }
+
 }
 
 
+//xu ly di chuyen va va cham cua ke dich
 void ThreatsObject :: DoPlayer(Map& gMap)
 {
 
@@ -174,15 +103,9 @@ void ThreatsObject :: DoPlayer(Map& gMap)
         {
         x_val = 0;
         y_val = 0;
-        if(x_pos > 256)
-        {
-            x_pos -= 256;
-            animation_a -= 256;
-            animation_b -= 256;
-        }
-        else{
-            x_pos = 0;
-        }
+
+        x_pos = 0;
+
         int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 2;
         int ground_y = tile_y * TILE_SIZE;
         y_pos = ground_y - get_height_frame();
@@ -319,7 +242,27 @@ void ThreatsObject :: ImpMoveType(SDL_Renderer * screen)
 
 
 }
+// hien thi ke dich ra man hinh
+void ThreatsObject :: show(SDL_Renderer* des)
+{
+    if(come_back_time == 0)
+    {
+        rect_.x = x_pos - map_x;
+        rect_.y = y_pos - map_y;
+        frame ++;
+        if(frame >= THREAT_FRAME_NUM)
+        {
+            frame = 0;
+        }
+        SDL_Rect* currentClip = &frame_clip[frame];
+        SDL_Rect rendQuad = {rect_.x , rect_.y , width_frame , height_frame};
+        SDL_RenderCopy(des , p_object , currentClip , &rendQuad);
 
+    }
+
+}
+
+// xu ly lop dan ban cua ke dich
 void ThreatsObject:: InitBullet(BulletObject* p_bullet,SDL_Renderer * screen)
 {
 
@@ -339,7 +282,6 @@ void ThreatsObject:: InitBullet(BulletObject* p_bullet,SDL_Renderer * screen)
     }
 
 }
-
 void ThreatsObject:: MakeBullet(SDL_Renderer * screen , const int& x_limit , const int& y_limit)
 {
 
@@ -350,7 +292,7 @@ void ThreatsObject:: MakeBullet(SDL_Renderer * screen , const int& x_limit , con
         {
             if(p_bullet->get_is_move())
             {
-                int bullet_distancce = rect_.x + width_frame - p_bullet->GetRect().x;
+                int bullet_distancce = rect_.x + width_frame - p_bullet->GetRect().x; // do khoan cach giua dan va nhan vat
                 if(bullet_distancce < 300 && bullet_distancce > 0)
                 {
 
@@ -362,7 +304,7 @@ void ThreatsObject:: MakeBullet(SDL_Renderer * screen , const int& x_limit , con
                     p_bullet->set_is_move(false);
                 }
             }
-            else
+            else // neu dan khong di chuyen thi chuyen trang thai thanh true de dan di chuyen
             {
                 p_bullet->set_is_move(true);
                 p_bullet->SetRect(rect_.x + 5 , y_pos + 20);
@@ -370,6 +312,25 @@ void ThreatsObject:: MakeBullet(SDL_Renderer * screen , const int& x_limit , con
         }
     }
 }
+
+
+void ThreatsObject :: removeBullet(const int& idx)
+{
+    int size = bullet_list.size();
+    if(size > 0 && idx < size )
+    {
+        BulletObject * p_bullet = bullet_list.at(idx);
+        bullet_list.erase(bullet_list.begin() +idx);
+
+        if(p_bullet)
+        {
+            delete p_bullet;
+            p_bullet = NULL;
+        }
+    }
+}
+
+
 
 
 

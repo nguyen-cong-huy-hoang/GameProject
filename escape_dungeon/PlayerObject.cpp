@@ -25,6 +25,8 @@ PlayerObject :: PlayerObject()
 
 PlayerObject :: ~PlayerObject(){}
 
+// load anh va setup frame
+
 bool PlayerObject ::LoadImg(std:: string path , SDL_Renderer * screen)
 {
     bool ret = BaseObject :: LoadImg(path , screen);
@@ -37,6 +39,20 @@ bool PlayerObject ::LoadImg(std:: string path , SDL_Renderer * screen)
     return ret;
 }
 
+void PlayerObject :: set_clips()
+{
+
+    if(width_frame > 0 && height_frame > 0)
+    {
+        for(int i = 0 ;i < MAX_FRAME ; i++)
+        {
+            frame_clip[i].x = i*width_frame;
+            frame_clip[i].y = 0;
+            frame_clip[i].w = width_frame;
+            frame_clip[i].h = height_frame;
+        }
+    }
+}
 SDL_Rect PlayerObject :: GetRectFrame()
 {
     SDL_Rect rect;
@@ -48,92 +64,8 @@ SDL_Rect PlayerObject :: GetRectFrame()
     return rect;
 }
 
-void PlayerObject :: set_clips()
-{
 
-    if(width_frame > 0 && height_frame > 0)
-    {
-
-        frame_clip[0].x = 0;
-        frame_clip[0].y = 0;
-        frame_clip[0].w = width_frame;
-        frame_clip[0].h = height_frame;
-
-        frame_clip[1].x = width_frame;
-        frame_clip[1].y = 0;
-        frame_clip[1].w = width_frame;
-        frame_clip[1].h = height_frame;
-
-        frame_clip[2].x = 2*width_frame;
-        frame_clip[2].y = 0;
-        frame_clip[2].w = width_frame;
-        frame_clip[2].h = height_frame;
-
-        frame_clip[3].x = 3*width_frame;
-        frame_clip[3].y = 0;
-        frame_clip[3].w = width_frame;
-        frame_clip[3].h = height_frame;
-
-        frame_clip[4].x = 4*width_frame;
-        frame_clip[4].y = 0;
-        frame_clip[4].w = width_frame;
-        frame_clip[4].h = height_frame;
-
-        frame_clip[5].x = 5*width_frame;
-        frame_clip[5].y = 0;
-        frame_clip[5].w = width_frame;
-        frame_clip[5].h = height_frame;
-
-        frame_clip[6].x = 6*width_frame;
-        frame_clip[6].y = 0;
-        frame_clip[6].w = width_frame;
-        frame_clip[6].h = height_frame;
-
-        frame_clip[7].x = 7*width_frame;
-        frame_clip[7].y = 0;
-        frame_clip[7].w = width_frame;
-        frame_clip[7].h = height_frame;
-    }
-}
-
-void PlayerObject :: show(SDL_Renderer* des)
-{
-    if(on_ground == true)
-    {
-    if(status == WALK_LEFT)
-    {
-
-        LoadImg("img//player_left.png" , des);
-    }
-    else{
-        LoadImg("img//player_right.png", des);
-    }
-}
-
-    if(input_type.left == 1 || input_type.right == 1)
-    {
-        frame++;
-    }
-    else
-    {
-        frame = 0;
-    }
-    if(frame >=8)
-    {
-        frame = 0;
-    }
-
-    rect_.x = x_pos - map_x ;
-    rect_.y = y_pos - map_y;
-
-    SDL_Rect * current_clip = &frame_clip[frame];
-
-    SDL_Rect rendrQuad = {rect_.x , rect_.y , width_frame , height_frame};
-
-    SDL_RenderCopy(des , p_object , current_clip , &rendrQuad);
-
-}
-
+// xu ly input nguoi dung
 
 void PlayerObject :: HandelInputAction(SDL_Event event , SDL_Renderer * screen)
 {
@@ -197,7 +129,7 @@ void PlayerObject :: HandelInputAction(SDL_Event event , SDL_Renderer * screen)
             }
 
 
-            p_bullet->set_x_val(20);
+            p_bullet->set_x_val(20); // xet van toc cho dan
             p_bullet->set_is_move(true);
             p_bullet_list.push_back(p_bullet);
             }
@@ -229,44 +161,8 @@ void PlayerObject :: HandelInputAction(SDL_Event event , SDL_Renderer * screen)
 
 }
 
-void PlayerObject:: HandleBullet(SDL_Renderer* des)
-{
-    for(size_t i = 0 ; i < p_bullet_list.size() ; i++)
-    {
-        BulletObject* p_bullet = p_bullet_list.at(i);
-        if(p_bullet->get_is_move() == true)
-        {
-            p_bullet->HandleMove(SCREEN_WIDTH , SCREEN_HEIGHT); // dan di ra khoi man hinh thi xoa
-            p_bullet->Render(des);
-        }
-        else
-        {
-            p_bullet_list.erase(p_bullet_list.begin() + i);
-            if(p_bullet != NULL)
-            {
-                delete p_bullet;
-                p_bullet = NULL;
-            }
-        }
-    }
-}
+//Di chuyen va xu ly va cham voi ban do
 
-
-void PlayerObject :: removeBullet(const int& idx)
-{
-    int size = p_bullet_list.size();
-    if(size > 0 && idx < size )
-    {
-        BulletObject * p_bullet = p_bullet_list.at(idx);
-        p_bullet_list.erase(p_bullet_list.begin() +idx);
-
-        if(p_bullet)
-        {
-            delete p_bullet;
-            p_bullet = NULL;
-        }
-    }
-}
 void PlayerObject :: DoPlayer(Map& map_data)
 {
     x_val = 0;
@@ -295,35 +191,6 @@ void PlayerObject :: DoPlayer(Map& map_data)
         CenterEnityOnMap(map_data);
 }
 
-void PlayerObject :: CenterEnityOnMap(Map& map_data)
-{
-    map_data.start_x = x_pos - (SCREEN_WIDTH / 2);
-    if(map_data.start_x < 0)
-    {
-        map_data.start_x = 0;
-    }
-    else if(map_data.start_x + SCREEN_WIDTH >= map_data.max_x)
-    {
-        map_data.start_x = map_data.max_x - SCREEN_WIDTH;
-    }
-
-    map_data.start_y = y_pos - (SCREEN_HEIGHT / 2);
-    if(map_data.start_y < 0)
-    {
-        map_data.start_y = 0;
-    }
-    else if(map_data.start_y + SCREEN_HEIGHT >= map_data.max_y)
-    {
-        map_data.start_y = map_data.max_y - SCREEN_HEIGHT;
-
-    }
-
-}
-
- void PlayerObject :: increasemoney()
- {
-     money_count++;
- }
 
 void PlayerObject :: CheckToMap(Map& map_data)
 {
@@ -335,7 +202,7 @@ void PlayerObject :: CheckToMap(Map& map_data)
     // Kiem tra va cham ngang
     int height_min = height_frame > TILE_SIZE ? height_frame : TILE_SIZE;
 
-    x1 = (x_pos + x_val) / TILE_SIZE;
+    x1 = (x_pos + x_val) / TILE_SIZE; // vi tri moi cua vat neu di chuyen
     x2 = (x_pos + width_frame + x_val - 1) / TILE_SIZE;
     y1 = y_pos / TILE_SIZE;
     y2 = (y_pos + height_min - 1) / TILE_SIZE;
@@ -445,6 +312,121 @@ void PlayerObject :: CheckToMap(Map& map_data)
         x_pos = map_data.max_x - width_frame - 1;
     }
 }
+
+void PlayerObject :: CenterEnityOnMap(Map& map_data)
+{
+    map_data.start_x = x_pos - (SCREEN_WIDTH / 2);
+    if(map_data.start_x < 0)
+    {
+        map_data.start_x = 0;
+    }
+    else if(map_data.start_x + SCREEN_WIDTH > map_data.max_x)
+    {
+        map_data.start_x = 0;
+
+    }
+
+    map_data.start_y = y_pos - (SCREEN_HEIGHT / 2);
+    if(map_data.start_y < 0)
+    {
+        map_data.start_y = 0;
+    }
+    else if(map_data.start_y + SCREEN_HEIGHT >= map_data.max_y)
+    {
+        map_data.start_y = map_data.max_y - SCREEN_HEIGHT;
+
+    }
+
+}
+
+// hien thi nhan vat
+void PlayerObject :: show(SDL_Renderer* des)
+{
+    if(on_ground == true)
+    {
+    if(status == WALK_LEFT)
+    {
+
+        LoadImg("img//player_left.png" , des);
+    }
+    else{
+        LoadImg("img//player_right.png", des);
+    }
+}
+
+    if(input_type.left == 1 || input_type.right == 1)
+    {
+        frame++;
+    }
+    else
+    {
+        frame = 0;
+    }
+    if(frame >=8)
+    {
+        frame = 0;
+    }
+
+    rect_.x = x_pos - map_x ; // quy doi tu toa do trong map ra toa do man hinh(man hinh di chuyen len truc toa do cung thay doi)
+    rect_.y = y_pos - map_y;
+
+    SDL_Rect * current_clip = &frame_clip[frame];
+
+    SDL_Rect rendrQuad = {rect_.x , rect_.y , width_frame , height_frame};
+
+    SDL_RenderCopy(des , p_object, current_clip , &rendrQuad);
+
+}
+
+
+// xu ly dan
+
+void PlayerObject:: HandleBullet(SDL_Renderer* des)
+{
+    for(size_t i = 0 ; i < p_bullet_list.size() ; i++)
+    {
+        BulletObject* p_bullet = p_bullet_list.at(i);
+        if(p_bullet->get_is_move() == true)
+        {
+            p_bullet->HandleMove(SCREEN_WIDTH , SCREEN_HEIGHT); // dan di ra khoi man hinh thi xoa
+            p_bullet->Render(des);
+        }
+        else
+        {
+            p_bullet_list.erase(p_bullet_list.begin() + i);
+            if(p_bullet != NULL)
+            {
+                delete p_bullet;
+                p_bullet = NULL;
+            }
+        }
+    }
+}
+
+
+void PlayerObject :: removeBullet(const int& idx)
+{
+    int size = p_bullet_list.size();
+    if(size > 0 && idx < size )
+    {
+        BulletObject * p_bullet = p_bullet_list.at(idx);
+        p_bullet_list.erase(p_bullet_list.begin() +idx);
+
+        if(p_bullet)
+        {
+            delete p_bullet;
+            p_bullet = NULL;
+        }
+    }
+}
+
+
+// cac ham phu tro
+ void PlayerObject :: increasemoney()
+ {
+     money_count++;
+ }
+
 
 
 

@@ -10,7 +10,7 @@
 #include "BulletObject.h"
 #include <vector>
 
-
+#define MAX_FRAME 8
 #define PLAYER_JUMP_VAL 18
 #define GRAVITY_SPEED 20
 #define MAX_FALL_SPEED 10
@@ -64,7 +64,7 @@ private:
     int width_frame;
     int height_frame;
 
-    SDL_Rect frame_clip[8]; // luu 8 frame cua nhan vat
+    SDL_Rect frame_clip[MAX_FRAME]; // luu 8 frame cua nhan vat
 
     Input input_type;
     int frame;

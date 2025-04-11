@@ -74,10 +74,10 @@ std :: vector<ThreatsObject*> MakeThreatdList()
             p_threat->LoadImg("img//test1.png", g_screen);
             p_threat->set_clips();
             p_threat->set_type_move(ThreatsObject::MOVE_IN_SPACE_THREAT);
-            p_threat->set_x_pos(500 + i * 500);
+            p_threat->set_x_pos(1000 + i * 500);
 
             // xac dinh vi tri mat dat
-            int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 2;
+            int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 3;
             int ground_y = tile_y * TILE_SIZE;
             p_threat->set_y_pos(ground_y - p_threat->get_height_frame());
 
