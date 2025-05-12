@@ -1,0 +1,197 @@
+# depslib dependency file v1.0
+1746890598 source:e:\gameproject\escape_dungeon\main.cpp
+	"CommonFunc.h"
+	"GameMap.h"
+	"Time.h"
+	"PlayerObject.h"
+	"ThreatsObject.h"
+	"TextObject.h"
+	"ButtonObject.h"
+	"SoundManager.h"
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<iostream>
+	<vector>
+
+1746877573 source:e:\gameproject\escape_dungeon\commonfunc.cpp
+	"CommonFunc.h"
+
+1746877601 e:\gameproject\escape_dungeon\commonfunc.h
+	<windows.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<string>
+	<vector>
+	<iostream>
+	"BaseObject.h"
+	<stdio.h>
+
+1742303139 source:e:\gameproject\escape_dungeon\baseobject.cpp
+	"BaseObject.h"
+
+1742523192 e:\gameproject\escape_dungeon\baseobject.h
+	"CommonFunc.h"
+
+1742103231 source:e:\gameproject\escape_dungeon\gamemap.cpp
+	"GameMap.h"
+
+1742636420 e:\gameproject\escape_dungeon\gamemap.h
+	"CommonFunc.h"
+	"BaseObject.h"
+
+1746801381 e:\gameproject\escape_dungeon\playerobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+	"GameMap.h"
+	"BulletObject.h"
+	<iostream>
+	<vector>
+
+1746801459 source:e:\gameproject\escape_dungeon\playerobject.cpp
+	"PlayerObject.h"
+
+1743081607 source:e:\gameproject\escape_dungeon\time.cpp
+	"Time.h"
+	"CommonFunc.h"
+
+1743081611 e:\gameproject\escape_dungeon\time.h
+
+1746175758 source:e:\gameproject\escape_dungeon\bulletobject.cpp
+	"BulletObject.h"
+
+1746174553 e:\gameproject\escape_dungeon\bulletobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+
+1745916948 e:\gameproject\escape_dungeon\threatsobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+	"BulletObject.h"
+
+1745932079 source:e:\gameproject\escape_dungeon\threatsobject.cpp
+	"ThreatsObject.h"
+
+1746190885 source:e:\gameproject\escape_dungeon\textobject.cpp
+	"TextObject.h"
+
+1744123956 e:\gameproject\escape_dungeon\textobject.h
+	"CommonFunc.h"
+
+1742303139 source:e:\test_code\escape_dungeon\baseobject.cpp
+	"BaseObject.h"
+
+1742523192 e:\test_code\escape_dungeon\baseobject.h
+	"CommonFunc.h"
+
+1746877601 e:\test_code\escape_dungeon\commonfunc.h
+	<windows.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<string>
+	<vector>
+	<iostream>
+	"BaseObject.h"
+	<stdio.h>
+
+1746175758 source:e:\test_code\escape_dungeon\bulletobject.cpp
+	"BulletObject.h"
+
+1746174553 e:\test_code\escape_dungeon\bulletobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+
+1746877573 source:e:\test_code\escape_dungeon\commonfunc.cpp
+	"CommonFunc.h"
+
+1742103231 source:e:\test_code\escape_dungeon\gamemap.cpp
+	"GameMap.h"
+
+1742636420 e:\test_code\escape_dungeon\gamemap.h
+	"CommonFunc.h"
+	"BaseObject.h"
+
+1746889578 source:e:\test_code\escape_dungeon\main.cpp
+	"CommonFunc.h"
+	"GameMap.h"
+	"Time.h"
+	"PlayerObject.h"
+	"ThreatsObject.h"
+	"TextObject.h"
+	"ButtonObject.h"
+	"SoundManager.h"
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<iostream>
+	<vector>
+
+1743081611 e:\test_code\escape_dungeon\time.h
+
+1746801381 e:\test_code\escape_dungeon\playerobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+	"GameMap.h"
+	"BulletObject.h"
+	<iostream>
+	<vector>
+
+1745916948 e:\test_code\escape_dungeon\threatsobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+	"BulletObject.h"
+
+1744123956 e:\test_code\escape_dungeon\textobject.h
+	"CommonFunc.h"
+
+1746801459 source:e:\test_code\escape_dungeon\playerobject.cpp
+	"PlayerObject.h"
+
+1746190885 source:e:\test_code\escape_dungeon\textobject.cpp
+	"TextObject.h"
+
+1745932079 source:e:\test_code\escape_dungeon\threatsobject.cpp
+	"ThreatsObject.h"
+
+1743081607 source:e:\test_code\escape_dungeon\time.cpp
+	"Time.h"
+	"CommonFunc.h"
+
+1746786937 e:\test_code\escape_dungeon\buttonobject.h
+	"BaseObject.h"
+	<SDL.h>
+	<string>
+
+1746455788 source:e:\test_code\escape_dungeon\buttonobject.cpp
+	"ButtonObject.h"
+
+1746889557 source:e:\test_code\escape_dungeon\soundmanager.cpp
+	"SoundManager.h"
+	<iostream>
+
+1746889557 e:\test_code\escape_dungeon\soundmanager.h
+	<SDL.h>
+	<SDL_mixer.h>
+	<string>
+	<map>
+
+1746455788 source:e:\gameproject\escape_dungeon\buttonobject.cpp
+	"ButtonObject.h"
+
+1746786937 e:\gameproject\escape_dungeon\buttonobject.h
+	"BaseObject.h"
+	<SDL.h>
+	<string>
+
+1746889557 e:\gameproject\escape_dungeon\soundmanager.h
+	<SDL.h>
+	<SDL_mixer.h>
+	<string>
+	<map>
+
+1746889557 source:e:\gameproject\escape_dungeon\soundmanager.cpp
+	"SoundManager.h"
+	<iostream>
+
