@@ -20,6 +20,8 @@ PlayerObject :: PlayerObject()
     on_ground = false;
     map_x = 0;
     map_y = 0;
+    check_time_skill = false;
+    skill_activation_time = 0;
     is_attacking = false;
     money_count = 0;
 }
@@ -197,6 +199,8 @@ void PlayerObject::HandelInputAction(SDL_Event event, SDL_Renderer* screen)
         break;
         case SDLK_k:
         {
+            if(check_time_skill == false)
+            {
             // Chỉ cho phép tấn công nếu không đang tấn công
            if (!is_attacking)
             {
@@ -235,7 +239,11 @@ void PlayerObject::HandelInputAction(SDL_Event event, SDL_Renderer* screen)
             p_bullet->set_is_move(true);
             p_bullet_list.push_back(p_bullet);
             }
+            check_time_skill = true;
+            skill_activation_time = SDL_GetTicks() / 1000;
         }
+
+    }
         break;
         }
     }
@@ -273,6 +281,10 @@ void PlayerObject::HandelInputAction(SDL_Event event, SDL_Renderer* screen)
 
 void PlayerObject :: DoPlayer(Map& map_data)
 {
+    if(x_pos == 0 && y_pos == 0)
+    {
+        x_pos = SCREEN_WIDTH/2;
+    }
     x_val = 0;
     y_val += 0.8;
 
@@ -321,13 +333,8 @@ void PlayerObject::CheckToMap(Map& map_data)
             int val1 = map_data.tile[y1][x2];
             int val2 = map_data.tile[y2][x2];
 
-            if (val1 == 4 || val2 == 4)
-            {
-                map_data.tile[y1][x2] = 0;
-                map_data.tile[y2][x2] = 0;
-                increasemoney();
-            }
-            else if (map_data.tile[y1][x2] != BLANK_TILE || map_data.tile[y2][x2] != BLANK_TILE)
+
+            if (map_data.tile[y1][x2] != BLANK_TILE || map_data.tile[y2][x2] != BLANK_TILE)
             {
                 x_pos = x2 * TILE_SIZE - (width_frame + 1);
                 x_val = 0;
@@ -338,13 +345,8 @@ void PlayerObject::CheckToMap(Map& map_data)
             int val1 = map_data.tile[y1][x1];
             int val2 = map_data.tile[y2][x1];
 
-            if (val1 == 4 || val2 == 4)
-            {
-                map_data.tile[y1][x1] = 0;
-                map_data.tile[y2][x1] = 0;
-                increasemoney();
-            }
-            else if (map_data.tile[y1][x1] != BLANK_TILE || map_data.tile[y2][x1] != BLANK_TILE)
+
+             if (map_data.tile[y1][x1] != BLANK_TILE || map_data.tile[y2][x1] != BLANK_TILE)
             {
                 x_pos = (x1 + 1) * TILE_SIZE;
                 x_val = 0;
@@ -366,13 +368,8 @@ void PlayerObject::CheckToMap(Map& map_data)
             int val1 = map_data.tile[y2][x1];
             int val2 = map_data.tile[y2][x2];
 
-            if (val1 == 4 || val2 == 4)
-            {
-                map_data.tile[y2][x1] = 0;
-                map_data.tile[y2][x2] = 0;
-                increasemoney();
-            }
-            else if (map_data.tile[y2][x1] != BLANK_TILE || map_data.tile[y2][x2] != BLANK_TILE)
+
+            if (map_data.tile[y2][x1] != BLANK_TILE || map_data.tile[y2][x2] != BLANK_TILE)
             {
                 y_pos = y2 * TILE_SIZE - (height_frame + 1); // Đảm bảo nhân vật nằm đúng trên mặt đất
                 y_val = 0;
@@ -384,13 +381,8 @@ void PlayerObject::CheckToMap(Map& map_data)
             int val1 = map_data.tile[y1][x1];
             int val2 = map_data.tile[y1][x2];
 
-            if (val1 == 4 || val2 == 4)
-            {
-                map_data.tile[y1][x1] = 0;
-                map_data.tile[y1][x2] = 0;
-                increasemoney();
-            }
-            else if (map_data.tile[y1][x1] != BLANK_TILE || map_data.tile[y1][x2] != BLANK_TILE)
+
+            if (map_data.tile[y1][x1] != BLANK_TILE || map_data.tile[y1][x2] != BLANK_TILE)
             {
                 y_pos = (y1 + 1) * TILE_SIZE;
                 y_val = 0;
@@ -410,7 +402,7 @@ void PlayerObject::CheckToMap(Map& map_data)
 void PlayerObject :: CenterEnityOnMap(Map& map_data)
 {
     // Tính toán vị trí bắt đầu của bản đồ để giữ nhân vật ở trung tâm
-    map_data.start_x = x_pos - (SCREEN_WIDTH / 3) +60;
+    map_data.start_x = x_pos - (SCREEN_WIDTH / 3);
     map_data.start_y = y_pos - (SCREEN_HEIGHT / 2);
 
     // Đảm bảo start_x không vượt quá giới hạn
@@ -580,13 +572,9 @@ void PlayerObject :: ResetPlayer(){
         // Reset vị trí bản đồ
     map_x = 0;
     map_y = 0;
+    check_time_skill = false;
+    skill_activation_time = 0;
     }
-
-// cac ham phu tro
- void PlayerObject :: increasemoney()
- {
-     money_count++;
- }
 
 
 

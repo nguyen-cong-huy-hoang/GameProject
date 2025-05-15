@@ -19,8 +19,8 @@
 class PlayerObject : public BaseObject
 {
 public:
-    PlayerObject(); // Constructor: Khởi tạo các giá trị mặc định cho nhân vật
-    ~PlayerObject(); // Destructor: Giải phóng bộ nhớ
+    PlayerObject();
+    ~PlayerObject();
 
     enum WalkType
     {
@@ -32,7 +32,7 @@ public:
         ATTACK_LEFT = 5,
     };
 
-    void increasemoney(); // Tăng số tiền (ví dụ khi ăn vật phẩm)
+
 
     // Tải ảnh nhân vật từ đường dẫn
     bool LoadImg(std::string path, SDL_Renderer *screen);
@@ -77,6 +77,11 @@ public:
 
     void ResetPlayer();
 
+    void set_check_time_skill(bool time_skill_) {check_time_skill = time_skill_;}
+    bool get_check_time_skill() const  {return check_time_skill ;}
+    void set_skill_activation_time(int time) { skill_activation_time = time; }
+    int get_skill_activation_time() const { return skill_activation_time; }
+
 
 private:
     int money_count; // Số tiền thu thập được
@@ -100,7 +105,8 @@ private:
     int map_x; // Tọa độ bản đồ trục X
     int map_y; // Tọa độ bản đồ trục Y
     bool is_attacking;
-
+    bool check_time_skill;
+    int skill_activation_time;
 
 };
 

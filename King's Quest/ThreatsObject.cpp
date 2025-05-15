@@ -17,6 +17,7 @@ ThreatsObject :: ThreatsObject()
     animation_a = 0;
     animation_b = 0;
     input_type.left = 0;
+    input_type.right = 0;
     type_move = STATIC_THREAT;
     num_frame = 0;
 
@@ -58,6 +59,24 @@ bool ThreatsObject :: LoadImg(std :: string path , SDL_Renderer* screen)
     {
         num_frame = THREAT_FRAME_NUM;
         width_frame = rect_.w / THREAT_FRAME_NUM;
+        height_frame = rect_.h;
+        set_clips();
+    }
+
+    return ret;
+}
+bool ThreatsObject :: LoadImgBoss(std :: string path , SDL_Renderer* screen)
+{
+
+    bool ret = BaseObject :: LoadImg(path , screen);
+
+    if (!ret) {
+
+    }
+    if(ret)
+    {
+        num_frame = THREAT_FRAME_NUM;
+        width_frame = rect_.w / BOSS_FRAME_NUM;
         height_frame = rect_.h;
         set_clips();
     }
@@ -235,6 +254,13 @@ void ThreatsObject::ImpMoveType(SDL_Renderer* screen)
             LoadImgFlying("img//flying_monster.png", screen);
         }
     }
+    else if(type_move == MOVE_RIGHT)
+    {
+        if(input_type.right == 1)
+        {
+            LoadImgFlying("img//Boss_threat.png", screen);
+        }
+    }
     else
     {
         if (on_ground == true)
@@ -330,7 +356,6 @@ void ThreatsObject :: removeBullet(const int& idx)
         }
     }
 }
-
 
 
 

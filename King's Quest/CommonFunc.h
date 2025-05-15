@@ -5,11 +5,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <string>
 #include <vector>
 #include <iostream>
 #include "BaseObject.h"
 #include <stdio.h>
+#include <string>
+#include <cstdlib>
+#include <ctime>
 static SDL_Window* g_window = NULL;
 static SDL_Renderer * g_screen = NULL;
 static SDL_Event g_event;
@@ -32,6 +34,9 @@ const int COLOR_KEY_B = 180;
 #define MAX_MAP_X 20000
 #define MAX_MAP_Y 7
 #define BLANK_TILE 0
+
+
+#define TIME_SKILL_2 0
 struct Map{
     int start_x;
     int start_y;

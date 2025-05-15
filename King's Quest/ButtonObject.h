@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <string>
 
+class SoundManager; //khai báo để tránh lỗi biên dịch
 class ButtonObject : public BaseObject {
 public:
     ButtonObject();
@@ -20,6 +21,9 @@ public:
     std::string GetType() const { return button_type; }
 
     void Show(SDL_Renderer* des);
+
+    // Hàm mới để xử lý trạng thái âm thanh
+    void ToggleMusic(SDL_Renderer* renderer, SoundManager* sound_manager, bool& music_state);
 
 private:
     SDL_Rect button_rect;

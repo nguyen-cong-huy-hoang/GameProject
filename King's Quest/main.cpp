@@ -6,6 +6,7 @@
 #include "TextObject.h"
 #include "ButtonObject.h"
 #include "SoundManager.h"
+#include "SliderObject.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -16,9 +17,11 @@ BaseObject loadBackground;
 TTF_Font* font_time = NULL;
 TextObject titleText;
 TextObject startText;
-TextObject time_game;
 TextObject Options;
-BaseObject iconMusic;
+TextObject time_game;
+TextObject volume_text;
+ButtonObject music_button;
+SliderObject volume_slider;
 
 bool InitData() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -32,7 +35,7 @@ bool InitData() {
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    g_window = SDL_CreateWindow("Escape_Dungeon",
+    g_window = SDL_CreateWindow("King Quest",
                                 SDL_WINDOWPOS_CENTERED,
                                 SDL_WINDOWPOS_CENTERED,
                                 SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -69,8 +72,11 @@ void close() {
     loadBackground.Free();
     titleText.Free();
     startText.Free();
+    Options.Free();
     time_game.Free();
-    iconMusic.Free(); // Giải phóng tài nguyên của iconMusic
+    volume_text.Free();
+    music_button.Free();
+    volume_slider.Free();
     TTF_CloseFont(font_time);
     font_time = nullptr;
     SDL_DestroyRenderer(g_screen);
@@ -126,15 +132,21 @@ std::vector<ThreatsObject*> MakeThreatdList() {
     return list_threats;
 }
 
-void music_mute(bool check = true) {
-    if (check == false) {
-        iconMusic.LoadImg("img//music_mute.png", g_screen);
-    } else {
-        iconMusic.LoadImg("img//music_on.png", g_screen);
+ThreatsObject* MakeBossObject() {
+    ThreatsObject* boss_threat = new ThreatsObject();
+    if (!boss_threat->LoadImgBoss("img//Boss_threat.png", g_screen)) {
+        std::cout << "Failed to load Boss_threat.png: " << SDL_GetError() << std::endl;
     }
+    boss_threat->set_type_move(ThreatsObject::MOVE_RIGHT);
+    boss_threat->set_x_pos(150);
+    int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 1;
+    int ground_y = tile_y * TILE_SIZE;
+    boss_threat->set_y_pos(ground_y - boss_threat->get_height_frame());
+    boss_threat->set_input_right(1);
+    return boss_threat;
 }
 
-void ResetGame(std::vector<ThreatsObject*>& threats_list, PlayerObject& p_player, int& paused_duration, int& last_time_val) {
+void ResetGame(std::vector<ThreatsObject*>& threats_list, PlayerObject& p_player, int& paused_duration, int& last_time_val, ThreatsObject*& boss_threat) {
     for (size_t i = 0; i < threats_list.size(); i++) {
         ThreatsObject* p_threat = threats_list.at(i);
         if (p_threat) {
@@ -149,18 +161,29 @@ void ResetGame(std::vector<ThreatsObject*>& threats_list, PlayerObject& p_player
     p_player.ResetPlayer();
     p_player.LoadImg("img//idle_right.png", g_screen);
 
+
+    if (boss_threat) {
+        boss_threat->Free();
+        delete boss_threat;
+    }
+    boss_threat = MakeBossObject();
+
     paused_duration = 0;
-    last_time_val = 300;
+    last_time_val = 0;
 }
 
 int main(int argc, char* argv[]) {
+    bool check_continue = false;
     Time fps_timer;
     if (!InitData()) return -1;
     if (!loadbackground()) return -1;
 
-    bool check = true;
-    music_mute(check);
-    iconMusic.SetRect(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100);
+    bool music_state = true;
+    if (!music_button.LoadImg("img//music_on.png", g_screen)) {
+        std::cout << "Failed to load music_on: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+    music_button.SetRect(70, 10, 50, 50, "music");
 
     SoundManager sound_manager;
     if (!sound_manager.Init()) {
@@ -180,22 +203,50 @@ int main(int argc, char* argv[]) {
 
     sound_manager.PlayMusic(-1);
 
-    enum GameState { START_SCREEN, PLAYING, PAUSED };
+    volume_slider.SetRect(SCREEN_WIDTH/2 -50 , SCREEN_HEIGHT/2 - 50, 150, 20, 10, 20);
+    if (!volume_slider.LoadImg("img//slider.png", g_screen)) {
+        std::cout << "Failed to load slider image, using default rectangle" << std::endl;
+    }
+    volume_text.SetColor(TextObject::WHITE_TEXT);
+
+    enum GameState { START_SCREEN, PLAYING, PAUSED , OPTIONS };
     GameState game_state = START_SCREEN;
+
+    ButtonObject restart_button;
+    restart_button.SetRect(SCREEN_WIDTH/2 , SCREEN_HEIGHT/2 +25, 50 , 50 , "button");
+    if (!restart_button.LoadImg("img//restart_button.png", g_screen)) {
+        std::cout << "Failed to load restart_button: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+
+    ButtonObject setting_button;
+
+    if (!setting_button.LoadImg("img//setting_button.png", g_screen)) {
+        std::cout << "Failed to load setting_button: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+
+    ButtonObject home_button;
+    if (!home_button.LoadImg("img//home_button.png", g_screen)) {
+        std::cout << "Failed to load home_button: " << SDL_GetError() << std::endl;
+        return -1;
+    }
 
     ButtonObject pause_button;
     if (!pause_button.LoadImg("img//pause_button.png", g_screen)) {
         std::cout << "Failed to load pause_button: " << SDL_GetError() << std::endl;
+        return -1;
     }
     pause_button.SetRect(10, 10, 50, 50, "pause");
 
     ButtonObject continue_button;
     if (!continue_button.LoadImg("img//continue_button.png", g_screen)) {
         std::cout << "Failed to load continue_button: " << SDL_GetError() << std::endl;
+        return -1;
     }
-    continue_button.SetRect((SCREEN_WIDTH - 100) / 2, SCREEN_HEIGHT - 200, 100, 50, "continue");
 
-    titleText.SetText("Escape Dungeon");
+
+    titleText.SetText("King Quest");
     titleText.SetColor(TextObject::WHITE_TEXT);
     if (!titleText.LoadFromRenderText(font_time, g_screen)) {
         std::cout << "Failed to load titleText: " << TTF_GetError() << std::endl;
@@ -209,7 +260,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    Options.SetText("Options");
+    Options.SetText("Setting");
     Options.SetColor(TextObject::WHITE_TEXT);
     if (!Options.LoadFromRenderText(font_time, g_screen)) {
         std::cout << "Failed to load Options text: " << TTF_GetError() << std::endl;
@@ -221,13 +272,16 @@ int main(int argc, char* argv[]) {
     loadmap.LoadTiles(g_screen);
     PlayerObject p_player;
     p_player.LoadImg("img//idle_right.png", g_screen);
+
     std::vector<ThreatsObject*> threats_list = MakeThreatdList();
+    ThreatsObject* boss_threat = MakeBossObject();
 
     time_game.SetColor(TextObject::WHITE_TEXT);
 
     int pause_start_time = 0;
     int paused_duration = 0;
-    int last_time_val = 300;
+    int last_time_val = 0;
+    int last_volume = -1;
 
     bool quit = false;
     while (!quit) {
@@ -253,28 +307,25 @@ int main(int argc, char* argv[]) {
                         game_state = PLAYING;
                         sound_manager.PlaySoundEffect("button_click");
                         sound_manager.LoadMusic("audio//battle.mp3");
-                        if(check == true) sound_manager.PlayMusic(-1);
-                        ResetGame(threats_list, p_player, paused_duration, last_time_val);
+                        if (music_state) sound_manager.PlayMusic(-1);
+                        ResetGame(threats_list, p_player, paused_duration, last_time_val, boss_threat);
                     }
 
                     SDL_Rect optionButton = { (SCREEN_WIDTH - 150) / 2, SCREEN_HEIGHT - 180, 150, 50 };
                     if (x >= optionButton.x && x <= optionButton.x + optionButton.w &&
                         y >= optionButton.y && y <= optionButton.y + optionButton.h) {
-                        std::cout << "Options clicked!" << std::endl;
+                        check_continue = false;
+                        game_state = OPTIONS;
                         sound_manager.PlaySoundEffect("button_click");
                     }
-
-                    SDL_Rect tmp = iconMusic.GetRect();
-                    if (x >= tmp.x && x <= tmp.x + tmp.w && y >= tmp.y && y <= tmp.y + tmp.h) {
-                        check = !check;
-                        music_mute(check);
-                        if (check == false) {
-                            sound_manager.PauseMusic();
-                        }else {
-                            sound_manager.PlayMusic(-1);
-                        }
-                    }
                 }
+                music_button.SetRect(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100, 50, 50, "music");
+                if (music_button.CheckClick(g_event)) {
+                    music_button.ToggleMusic(g_screen, &sound_manager, music_state);
+                    sound_manager.PlaySoundEffect("button_click");
+                }
+
+
             } else if (game_state == PLAYING) {
                 p_player.HandelInputAction(g_event, g_screen);
                 if (pause_button.CheckClick(g_event)) {
@@ -285,15 +336,51 @@ int main(int argc, char* argv[]) {
                     }
                 }
             } else if (game_state == PAUSED) {
+                continue_button.SetRect((SCREEN_WIDTH - 100) / 2, SCREEN_HEIGHT - 200, 50, 50, "continue");
                 if (continue_button.CheckClick(g_event) && continue_button.IsClicked()) {
+                    check_continue = false;
                     game_state = PLAYING;
                     paused_duration += SDL_GetTicks() - pause_start_time;
                     pause_button.ResetClicked();
                     continue_button.ResetClicked();
-                    if (check == true && sound_manager.IsPaused()) {
+                    if (music_state && sound_manager.IsPaused()) {
                         sound_manager.ResumeMusic();
                     }
                 }
+                if(restart_button.CheckClick(g_event))
+                {
+                    ResetGame(threats_list, p_player, paused_duration, last_time_val, boss_threat);
+                    game_state = PLAYING;
+                }
+                if(home_button.CheckClick(g_event))
+                {
+                    check_continue = false;
+                    game_state = START_SCREEN;
+                }
+                home_button.SetRect(SCREEN_WIDTH/2 -50 , SCREEN_HEIGHT/2 + 75,50 , 50, "home");
+                setting_button.SetRect(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 +75, 50 , 50 ,"setting");
+                if(setting_button.CheckClick(g_event))
+                {
+                    check_continue = true;
+                    game_state = OPTIONS;
+                }
+
+            }
+            else if(game_state == OPTIONS)
+            {
+
+                volume_slider.HandleInput(g_event, &sound_manager);
+                home_button.SetRect(SCREEN_WIDTH/2 , SCREEN_HEIGHT/2,50 , 50, "home");
+                if(home_button.CheckClick(g_event))
+                {
+                    game_state = START_SCREEN;
+                }
+                if(continue_button.CheckClick(g_event))
+                {
+
+                    game_state = PAUSED;
+                }
+
             }
         }
 
@@ -309,7 +396,7 @@ int main(int argc, char* argv[]) {
             SDL_SetRenderDrawColor(g_screen, 255, 255, 255, 255);
             SDL_RenderDrawRect(g_screen, &startButton);
             startText.RenderText(g_screen, startButton.x + (startButton.w - startText.GetWidth()) / 2,
-                               startButton.y + (startButton.h - startText.GetHeight()) / 2);
+                                startButton.y + (startButton.h - startText.GetHeight()) / 2);
 
             SDL_SetRenderDrawColor(g_screen, 255, 0, 0, 255);
             SDL_Rect optionButton = { (SCREEN_WIDTH - 150) / 2, SCREEN_HEIGHT - 180, 150, 50 };
@@ -317,15 +404,56 @@ int main(int argc, char* argv[]) {
             SDL_SetRenderDrawColor(g_screen, 255, 255, 255, 255);
             SDL_RenderDrawRect(g_screen, &optionButton);
             Options.RenderText(g_screen, optionButton.x + (optionButton.w - Options.GetWidth()) / 2,
-                             optionButton.y + (optionButton.h - Options.GetHeight()) / 2);
+                              optionButton.y + (optionButton.h - Options.GetHeight()) / 2);
 
-            iconMusic.Render(g_screen);
-        } else {
+            music_button.Show(g_screen);
+
+
+        }
+        else if(game_state == OPTIONS)
+        {
+         volume_slider.Show(g_screen);
+            int current_volume = sound_manager.GetVolume();
+            if (current_volume != last_volume) {
+                std::string volume_str = "Volume: " + std::to_string(current_volume * 100 / MIX_MAX_VOLUME) + "%";
+                volume_text.SetText(volume_str);
+                volume_text.LoadFromRenderText(font_time, g_screen);
+                last_volume = current_volume;
+            }
+             continue_button.SetRect((SCREEN_WIDTH - 100) / 2, SCREEN_HEIGHT - 200, 50, 50, "continue");
+            volume_text.RenderText(g_screen, SCREEN_WIDTH/2 -50,SCREEN_HEIGHT/2 -25 );
+            home_button.Show(g_screen);
+            if(check_continue == true)
+            {
+                continue_button.Show(g_screen);
+            }
+        }else {
             Map map_data = loadmap.getMap();
             if (game_state == PLAYING) {
                 p_player.HandleBullet(g_screen);
                 p_player.setMapXY(map_data.start_x, map_data.start_y);
                 p_player.DoPlayer(map_data);
+
+                if (boss_threat){
+                    if (boss_threat->get_x_pos() < map_data.start_x - 80) {
+
+                        boss_threat->set_x_pos(map_data.start_x -80);
+                    }
+                    boss_threat->SetMapXY(map_data.start_x, map_data.start_y);
+                }
+                boss_threat->ImpMoveType(g_screen);
+                boss_threat->DoPlayer(map_data);
+
+                int current_time = SDL_GetTicks();
+                int adjusted_time = current_time - paused_duration;
+                last_time_val = adjusted_time / 1000;
+
+                if (p_player.get_check_time_skill()) {
+                    int skill_activation_time = p_player.get_skill_activation_time();
+                    if (last_time_val >= skill_activation_time + TIME_SKILL_2) {
+                        p_player.set_check_time_skill(false);
+                    }
+                }
             }
             p_player.show(g_screen);
 
@@ -366,15 +494,20 @@ int main(int argc, char* argv[]) {
                             const wchar_t* msg = L"GAME OVER";
                             const wchar_t* title = L"Info";
                             if (MessageBoxW(NULL, msg, title, MB_OK | MB_ICONSTOP) == IDOK) {
-                                ResetGame(threats_list, p_player, paused_duration, last_time_val);
+                                ResetGame(threats_list, p_player, paused_duration, last_time_val, boss_threat);
                                 game_state = START_SCREEN;
                                 sound_manager.LoadMusic("audio//background_music.mp3");
-                                if(check == true) sound_manager.PlayMusic(-1);
+                                if (music_state) sound_manager.PlayMusic(-1);
                             }
                         }
                     }
                 }
             }
+
+            // Hiển thị boss
+
+
+                boss_threat->show(g_screen);
 
             if (game_state == PLAYING) {
                 std::vector<BulletObject*> bullet_arr = p_player.get_bullet_list();
@@ -391,7 +524,6 @@ int main(int argc, char* argv[]) {
                                 tRect.h = obj_threat->get_width_frame();
 
                                 SDL_Rect bRect = p_bullet->GetRect();
-
                                 bool bCol = SDLCommonFunc::CheckCollision(bRect, tRect);
                                 if (bCol) {
                                     p_player.removeBullet(bl);
@@ -403,31 +535,13 @@ int main(int argc, char* argv[]) {
                     }
                 }
 
-                Uint32 current_time = SDL_GetTicks();
-                Uint32 adjusted_time = current_time - paused_duration;
-                Uint32 time_val = adjusted_time / 1000;
-                last_time_val = 300 - time_val;
-                if (last_time_val <= 0) {
-                    sound_manager.PlaySoundEffect("game_over");
-                    const wchar_t* msg = L"GAME OVER";
-                    const wchar_t* title = L"Info";
-                    if (MessageBoxW(NULL, msg, title, MB_OK | MB_ICONSTOP) == IDOK) {
-                        ResetGame(threats_list, p_player, paused_duration, last_time_val);
-                        game_state = START_SCREEN;
-                    }
-                }
-            }
-
-            if (last_time_val > 0) {
-                std::string str_time = "Time: " + std::to_string(last_time_val);
-                time_game.SetText(str_time);
-                time_game.LoadFromRenderText(font_time, g_screen);
-            }
-            time_game.RenderText(g_screen, SCREEN_WIDTH - 200, 15);
-
-            if (game_state == PLAYING) {
                 pause_button.Show(g_screen);
             }
+
+            std::string str_time = "Time: " + std::to_string(last_time_val);
+            time_game.SetText(str_time);
+            time_game.LoadFromRenderText(font_time, g_screen);
+            time_game.RenderText(g_screen, SCREEN_WIDTH - 200, 15);
 
             if (game_state == PAUSED) {
                 TextObject pause_text;
@@ -435,8 +549,11 @@ int main(int argc, char* argv[]) {
                 pause_text.SetColor(TextObject::WHITE_TEXT);
                 pause_text.LoadFromRenderText(font_time, g_screen);
                 pause_text.RenderText(g_screen, (SCREEN_WIDTH - pause_text.GetWidth()) / 2,
-                                    (SCREEN_HEIGHT - pause_text.GetHeight()) / 2);
+                                     (SCREEN_HEIGHT - pause_text.GetHeight()) / 2);
                 continue_button.Show(g_screen);
+                restart_button.Show(g_screen);
+                home_button.Show(g_screen);
+                setting_button.Show(g_screen);
             }
         }
 
@@ -459,6 +576,10 @@ int main(int argc, char* argv[]) {
         }
     }
     threats_list.clear();
+    if (boss_threat) {
+        boss_threat->Free();
+        delete boss_threat;
+    }
     sound_manager.Free();
     close();
     return 0;

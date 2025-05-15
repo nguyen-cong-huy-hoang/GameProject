@@ -12,6 +12,7 @@
 #define THREAT_MAX_FALL_SPEED 10
 #define THREAT_FRAME_NUM 9
 #define THREAT_FRAME_FLYING 4
+#define BOSS_FRAME_NUM 6
 class ThreatsObject : public BaseObject
 {
 public:
@@ -25,6 +26,7 @@ public:
         MOVE_IN_SPACE_THREAT =1,
         MOVE_LEFT = 2,
         FLYING_THREAT = 3,
+        MOVE_RIGHT = 4,
     };
     // toc do di chuyen cua ke dich
     void set_x_val(const float& xVal){x_val = xVal;}
@@ -41,6 +43,7 @@ public:
     void set_clips(); // chia frame
     bool LoadImg(std :: string path , SDL_Renderer * screen);
     bool LoadImgFlying(std :: string path , SDL_Renderer* screen);
+    bool LoadImgBoss(std :: string path , SDL_Renderer* screen);
     void show(SDL_Renderer * des);
     int get_width_frame() const {return width_frame;}
     int get_height_frame() const {return height_frame;}
@@ -52,7 +55,8 @@ public:
     void set_type_move(const int& typeMove){type_move = typeMove;}
     int get_type_move() const { return type_move; }
     void SetAnimationPos(const int& pos_a , const int& pos_b){animation_a = pos_a ; animation_b = pos_b;}
-    void set_input_left(const int& ipleft ){input_type.left = ipleft;};
+    void set_input_left(const int& ipleft ){input_type.left = ipleft;}
+    void set_input_right(const int& ipright){input_type.right = ipright;}
     void ImpMoveType(SDL_Renderer * screen); // trang thai di chuyen cua nhan vat
 
     std :: vector<BulletObject*> get_bullet_list()const{return bullet_list;}

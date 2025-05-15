@@ -44,10 +44,8 @@
 		<Unit filename="GameMap.h" />
 		<Unit filename="PlayerObject.cpp" />
 		<Unit filename="PlayerObject.h" />
-		<Unit filename="SDL2.dll" />
-		<Unit filename="SDL2_image.dll" />
-		<Unit filename="SDL2_mixer.dll" />
-		<Unit filename="SDL2_ttf.dll" />
+		<Unit filename="SliderObject.cpp" />
+		<Unit filename="SliderObject.h" />
 		<Unit filename="SoundManager.cpp" />
 		<Unit filename="SoundManager.h" />
 		<Unit filename="TextObject.cpp" />
@@ -56,9 +54,6 @@
 		<Unit filename="ThreatsObject.h" />
 		<Unit filename="Time.cpp" />
 		<Unit filename="Time.h" />
-		<Unit filename="escape_dungeon.cbp" />
-		<Unit filename="escape_dungeon.depend" />
-		<Unit filename="escape_dungeon.layout" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>

@@ -195,3 +195,114 @@
 	"SoundManager.h"
 	<iostream>
 
+1742303139 source:e:\gameproject\king's quest\baseobject.cpp
+	"BaseObject.h"
+
+1742523192 e:\gameproject\king's quest\baseobject.h
+	"CommonFunc.h"
+
+1747299739 e:\gameproject\king's quest\commonfunc.h
+	<windows.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<vector>
+	<iostream>
+	"BaseObject.h"
+	<stdio.h>
+	<string>
+	<cstdlib>
+	<ctime>
+
+1746175758 source:e:\gameproject\king's quest\bulletobject.cpp
+	"BulletObject.h"
+
+1746174553 e:\gameproject\king's quest\bulletobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+
+1747324531 source:e:\gameproject\king's quest\buttonobject.cpp
+	"ButtonObject.h"
+	"SoundManager.h"
+
+1747139903 e:\gameproject\king's quest\buttonobject.h
+	"BaseObject.h"
+	<SDL.h>
+	<string>
+
+1746877573 source:e:\gameproject\king's quest\commonfunc.cpp
+	"CommonFunc.h"
+
+1742103231 source:e:\gameproject\king's quest\gamemap.cpp
+	"GameMap.h"
+
+1742636420 e:\gameproject\king's quest\gamemap.h
+	"CommonFunc.h"
+	"BaseObject.h"
+
+1747322084 source:e:\gameproject\king's quest\main.cpp
+	"CommonFunc.h"
+	"GameMap.h"
+	"Time.h"
+	"PlayerObject.h"
+	"ThreatsObject.h"
+	"TextObject.h"
+	"ButtonObject.h"
+	"SoundManager.h"
+	"SliderObject.h"
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<iostream>
+	<vector>
+
+1743081611 e:\gameproject\king's quest\time.h
+
+1747299291 e:\gameproject\king's quest\playerobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+	"GameMap.h"
+	"BulletObject.h"
+	<iostream>
+	<vector>
+
+1747314233 e:\gameproject\king's quest\threatsobject.h
+	"CommonFunc.h"
+	"BaseObject.h"
+	"BulletObject.h"
+
+1744123956 e:\gameproject\king's quest\textobject.h
+	"CommonFunc.h"
+
+1747149812 e:\gameproject\king's quest\soundmanager.h
+	<SDL_mixer.h>
+	<string>
+	<map>
+
+1747303239 source:e:\gameproject\king's quest\playerobject.cpp
+	"PlayerObject.h"
+
+1747148757 source:e:\gameproject\king's quest\soundmanager.cpp
+	"SoundManager.h"
+	<iostream>
+
+1746190885 source:e:\gameproject\king's quest\textobject.cpp
+	"TextObject.h"
+
+1747296704 source:e:\gameproject\king's quest\threatsobject.cpp
+	"ThreatsObject.h"
+
+1743081607 source:e:\gameproject\king's quest\time.cpp
+	"Time.h"
+	"CommonFunc.h"
+
+1747149812 source:e:\gameproject\king's quest\sliderobject.cpp
+	"SliderObject.h"
+	"SoundManager.h"
+	<algorithm>
+
+1747148757 e:\gameproject\king's quest\sliderobject.h
+	"BaseObject.h"
+	<SDL.h>
+	<string>
+
