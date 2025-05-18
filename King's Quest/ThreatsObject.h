@@ -13,6 +13,7 @@
 #define THREAT_FRAME_NUM 9
 #define THREAT_FRAME_FLYING 4
 #define BOSS_FRAME_NUM 6
+#define THREAT_BOSS_SPEED 2
 class ThreatsObject : public BaseObject
 {
 public:
@@ -64,6 +65,7 @@ public:
     void InitBullet(BulletObject* p_bullet , SDL_Renderer *screen); // khoi tao vien dan
     void MakeBullet(SDL_Renderer * screen , const int& x_limit , const int& y_limit); // gioi han dan di chuyen trong mot pham vi nhat dinh
     void removeBullet(const int& idx); // xoa dan
+    void ResetBullet(SDL_Renderer* screen);
 
 private:
     int frame;

@@ -21,7 +21,6 @@ PlayerObject :: PlayerObject()
     map_x = 0;
     map_y = 0;
     check_time_skill = false;
-    skill_activation_time = 0;
     is_attacking = false;
     money_count = 0;
 }
@@ -240,7 +239,7 @@ void PlayerObject::HandelInputAction(SDL_Event event, SDL_Renderer* screen)
             p_bullet_list.push_back(p_bullet);
             }
             check_time_skill = true;
-            skill_activation_time = SDL_GetTicks() / 1000;
+
         }
 
     }
@@ -284,6 +283,9 @@ void PlayerObject :: DoPlayer(Map& map_data)
     if(x_pos == 0 && y_pos == 0)
     {
         x_pos = SCREEN_WIDTH/2;
+        int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 1;
+        int ground_y = tile_y * TILE_SIZE;
+        y_pos = ground_y - height_frame;
     }
     x_val = 0;
     y_val += 0.8;
@@ -573,7 +575,7 @@ void PlayerObject :: ResetPlayer(){
     map_x = 0;
     map_y = 0;
     check_time_skill = false;
-    skill_activation_time = 0;
+
     }
 
 

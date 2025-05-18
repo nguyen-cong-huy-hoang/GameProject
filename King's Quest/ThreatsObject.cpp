@@ -113,18 +113,16 @@ void ThreatsObject :: set_clips()
 
 void ThreatsObject::DoPlayer(Map& gMap)
 {
-    if (come_back_time == 0)
-    {
         x_val = 0;
 
         if (type_move != FLYING_THREAT)
         {
 
-                y_val += THREAT_GRAVITY_SPEED;
-                if (y_val >= THREAT_MAX_FALL_SPEED)
-                {
-                    y_val = THREAT_MAX_FALL_SPEED;
-                }
+            y_val += THREAT_GRAVITY_SPEED;
+            if (y_val >= THREAT_MAX_FALL_SPEED)
+            {
+                y_val = THREAT_MAX_FALL_SPEED;
+            }
 
         }
         else
@@ -134,41 +132,27 @@ void ThreatsObject::DoPlayer(Map& gMap)
 
         if (input_type.left == 1)
         {
+            if(type_move == MOVE_RIGHT)
+            {
+                x_val -= THREAT_BOSS_SPEED;
+            }
+            else{
             x_val -= THREAT_SPEED;
+            }
         }
         else if (input_type.right == 1)
         {
+            if(type_move == MOVE_RIGHT)
+            {
+                x_val += THREAT_BOSS_SPEED;
+            }
+            else{
             x_val += THREAT_SPEED;
+            }
         }
 
         checkToMap(gMap);
-    }
-    else if (come_back_time > 0)
-    {
-        come_back_time--;
-        if (come_back_time == 0)
-        {
-            x_val = 0;
-            y_val = 0;
-            x_pos = 0;
 
-            int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 1;
-            int ground_y = tile_y * TILE_SIZE;
-
-            if (type_move == FLYING_THREAT)
-            {
-                y_pos = ground_y - get_height_frame() - TILE_SIZE / 2;
-            }
-            else
-            {
-                y_pos = ground_y - get_height_frame();
-                on_ground = false;
-            }
-
-            come_back_time = 0;
-            input_type.left = 1;
-        }
-    }
 }
 
 void ThreatsObject::checkToMap(Map& gMap)
@@ -227,10 +211,7 @@ void ThreatsObject::checkToMap(Map& gMap)
         x_pos = gMap.max_x - width_frame - 1;
     }
 
-    if (y_pos > gMap.max_y)
-    {
-        come_back_time = 20;
-    }
+
 }
 
 
@@ -272,8 +253,7 @@ void ThreatsObject::ImpMoveType(SDL_Renderer* screen)
 // hien thi ke dich ra man hinh
 void ThreatsObject :: show(SDL_Renderer* des)
 {
-    if(come_back_time == 0)
-    {
+
         rect_.x = x_pos - map_x;
         rect_.y = y_pos - map_y;
         frame ++;
@@ -284,8 +264,6 @@ void ThreatsObject :: show(SDL_Renderer* des)
         SDL_Rect* currentClip = &frame_clip[frame];
         SDL_Rect rendQuad = {rect_.x , rect_.y , width_frame , height_frame};
         SDL_RenderCopy(des , p_object , currentClip , &rendQuad);
-
-    }
 
 }
 
@@ -357,6 +335,13 @@ void ThreatsObject :: removeBullet(const int& idx)
     }
 }
 
+void ThreatsObject :: ResetBullet(SDL_Renderer* screen) {
+        while (!bullet_list.empty()) {
+            removeBullet(0);
+        }
+        BulletObject* p_bullet = new BulletObject();
+        InitBullet(p_bullet, screen);
+}
 
 
 

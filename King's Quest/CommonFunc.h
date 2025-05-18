@@ -56,7 +56,7 @@ struct Input
     int up;
 };
 
-const int PLAYER_COLLISION_OFFSET_X = 70; // Khoảng trống ngang của sprite nhân vật
+const int PLAYER_COLLISION_OFFSET_X = 65; // Khoảng trống ngang của sprite nhân vật
 
 namespace SDLCommonFunc
 {

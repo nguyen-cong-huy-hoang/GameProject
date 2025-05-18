@@ -79,8 +79,7 @@ public:
 
     void set_check_time_skill(bool time_skill_) {check_time_skill = time_skill_;}
     bool get_check_time_skill() const  {return check_time_skill ;}
-    void set_skill_activation_time(int time) { skill_activation_time = time; }
-    int get_skill_activation_time() const { return skill_activation_time; }
+
 
 
 private:
@@ -106,7 +105,7 @@ private:
     int map_y; // Tọa độ bản đồ trục Y
     bool is_attacking;
     bool check_time_skill;
-    int skill_activation_time;
+
 
 };
 
