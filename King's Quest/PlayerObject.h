@@ -74,7 +74,7 @@ public:
 
     // Thiết lập vị trí của map hiện tại
     void setMapXY(const int map_x_, const int map_y_) { map_x = map_x_; map_y = map_y_; }
-
+    //hàm rest nhân vật
     void ResetPlayer();
 
     void set_check_time_skill(bool time_skill_) {check_time_skill = time_skill_;}
@@ -103,8 +103,8 @@ private:
 
     int map_x; // Tọa độ bản đồ trục X
     int map_y; // Tọa độ bản đồ trục Y
-    bool is_attacking;
-    bool check_time_skill;
+    bool is_attacking; //kiểm tra xem có đang tấn công hay không
+    bool check_time_skill;//thời gian hồi  skill
 
 
 };

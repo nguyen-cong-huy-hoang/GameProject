@@ -10,7 +10,7 @@ GameMap::GameMap() {
 GameMap::~GameMap() {
 
 }
-void GameMap::LoadMap(char* name) {
+void GameMap::LoadMap(char* name) { // gán giá trị cho một ô
     FILE* fp = NULL;
     fopen_s(&fp, name, "rb");
     if (fp == NULL) {

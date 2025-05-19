@@ -159,7 +159,7 @@ void PlayerObject::HandelInputAction(SDL_Event event, SDL_Renderer* screen)
         case SDLK_j:
         {
             // Chỉ cho phép tấn công nếu không đang tấn công
-            if (!is_attacking)
+            if (!is_attacking && on_ground == true)
             {
                 BulletObject* p_bullet = new BulletObject();
                 p_bullet->LoadImageSkill("img//defensive_skill.png" ,screen);
@@ -289,7 +289,6 @@ void PlayerObject :: DoPlayer(Map& map_data)
     }
     x_val = 0;
     y_val += 0.8;
-
     if(y_val >= MAX_FALL_SPEED)
     {
         y_val = MAX_FALL_SPEED;
@@ -320,42 +319,6 @@ void PlayerObject::CheckToMap(Map& map_data)
     int y1 = 0;
     int y2 = 0;
 
-    // Kiểm tra va chạm ngang
-    int height_min = height_frame > TILE_SIZE ? height_frame : TILE_SIZE;
-
-    x1 = (x_pos + x_val) / TILE_SIZE;
-    x2 = (x_pos + x_val + width_frame - 1) / TILE_SIZE;
-    y1 = y_pos / TILE_SIZE;
-    y2 = (y_pos + height_min - 1) / TILE_SIZE;
-
-    if (x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y)
-    {
-        if (x_val > 0) // Sang phải
-        {
-            int val1 = map_data.tile[y1][x2];
-            int val2 = map_data.tile[y2][x2];
-
-
-            if (map_data.tile[y1][x2] != BLANK_TILE || map_data.tile[y2][x2] != BLANK_TILE)
-            {
-                x_pos = x2 * TILE_SIZE - (width_frame + 1);
-                x_val = 0;
-            }
-        }
-        else if (x_val < 0) // Sang trái
-        {
-            int val1 = map_data.tile[y1][x1];
-            int val2 = map_data.tile[y2][x1];
-
-
-             if (map_data.tile[y1][x1] != BLANK_TILE || map_data.tile[y2][x1] != BLANK_TILE)
-            {
-                x_pos = (x1 + 1) * TILE_SIZE;
-                x_val = 0;
-            }
-        }
-    }
-
     // Kiểm tra va chạm dọc (nhảy/ rơi)
     int width_min = width_frame < TILE_SIZE ? width_frame : TILE_SIZE;
     x1 = x_pos / TILE_SIZE;
@@ -382,7 +345,6 @@ void PlayerObject::CheckToMap(Map& map_data)
         {
             int val1 = map_data.tile[y1][x1];
             int val2 = map_data.tile[y1][x2];
-
 
             if (map_data.tile[y1][x1] != BLANK_TILE || map_data.tile[y1][x2] != BLANK_TILE)
             {

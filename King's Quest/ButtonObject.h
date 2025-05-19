@@ -22,7 +22,7 @@ public:
 
     void Show(SDL_Renderer* des);
 
-    // Hàm mới để xử lý trạng thái âm thanh
+    // Hàm để xử lý trạng thái âm thanh
     void ToggleMusic(SDL_Renderer* renderer, SoundManager* sound_manager, bool& music_state);
 
 private:

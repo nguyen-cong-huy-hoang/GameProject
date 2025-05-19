@@ -26,3 +26,4 @@ bool SDLCommonFunc::CheckCollision(const SDL_Rect& a, const SDL_Rect& b)
 
     return true; // nếu không rơi vào 4 trường hợp trên => có va chạm
 }
+

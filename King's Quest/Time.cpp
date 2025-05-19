@@ -83,4 +83,6 @@ bool Time ::is_started_()
     return is_started;
 }
 
-bool Time :: is_paused_(){return is_paused;}
+bool Time :: is_paused_(){
+    return is_paused;
+}

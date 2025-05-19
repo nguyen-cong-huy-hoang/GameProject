@@ -7,13 +7,13 @@
 #include "CommonFunc.h"
 #include "BaseObject.h"
 #include "BulletObject.h"
-#define THREAT_SPEED 5
+#define THREAT_SPEED 3
 #define THREAT_GRAVITY_SPEED 0.8
 #define THREAT_MAX_FALL_SPEED 10
 #define THREAT_FRAME_NUM 9
 #define THREAT_FRAME_FLYING 4
 #define BOSS_FRAME_NUM 6
-#define THREAT_BOSS_SPEED 2
+#define THREAT_BOSS_SPEED 1.5
 class ThreatsObject : public BaseObject
 {
 public:
@@ -38,13 +38,16 @@ public:
     float get_x_pos() const {return x_pos;}
     float get_y_pos() const {return y_pos;}
 
-
+    //xét tọa độ map của kẻ địch
     void SetMapXY(const int& mp_x , const int& mp_y){map_x = mp_x; map_y = mp_y;}
 
     void set_clips(); // chia frame
+    //hàm load ảnh kẻ địch
     bool LoadImg(std :: string path , SDL_Renderer * screen);
     bool LoadImgFlying(std :: string path , SDL_Renderer* screen);
     bool LoadImgBoss(std :: string path , SDL_Renderer* screen);
+
+
     void show(SDL_Renderer * des);
     int get_width_frame() const {return width_frame;}
     int get_height_frame() const {return height_frame;}
@@ -55,17 +58,16 @@ public:
 
     void set_type_move(const int& typeMove){type_move = typeMove;}
     int get_type_move() const { return type_move; }
-    void SetAnimationPos(const int& pos_a , const int& pos_b){animation_a = pos_a ; animation_b = pos_b;}
     void set_input_left(const int& ipleft ){input_type.left = ipleft;}
     void set_input_right(const int& ipright){input_type.right = ipright;}
-    void ImpMoveType(SDL_Renderer * screen); // trang thai di chuyen cua nhan vat
+    void ImpMoveType(SDL_Renderer * screen); // trạng thái di chuyển của nhân vật
 
     std :: vector<BulletObject*> get_bullet_list()const{return bullet_list;}
-    void set_bullet_list(const std:: vector<BulletObject*>& bl_list){bullet_list = bl_list;} // tao mot danh sach quan ly dan
-    void InitBullet(BulletObject* p_bullet , SDL_Renderer *screen); // khoi tao vien dan
-    void MakeBullet(SDL_Renderer * screen , const int& x_limit , const int& y_limit); // gioi han dan di chuyen trong mot pham vi nhat dinh
-    void removeBullet(const int& idx); // xoa dan
-    void ResetBullet(SDL_Renderer* screen);
+    void set_bullet_list(const std:: vector<BulletObject*>& bl_list){bullet_list = bl_list;} // tạo một danh sách quản lý đạn
+    void InitBullet(BulletObject* p_bullet , SDL_Renderer *screen); // khởi tạo đạn
+    void MakeBullet(SDL_Renderer * screen , const int& x_limit , const int& y_limit); // giới hạn đạn di chuyển trong một phạm vi nhất định
+    void removeBullet(const int& idx); // xóa đạn
+    void ResetBullet(SDL_Renderer* screen);// reset lại đạn
 
 private:
     int frame;
@@ -82,8 +84,6 @@ private:
     int map_y;
     int direction;
     int type_move;
-    int animation_a;
-    int animation_b;
     Input input_type;
     int num_frame;
 

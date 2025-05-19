@@ -10,6 +10,7 @@ SoundManager::~SoundManager() {
     Free();
 }
 
+//khởi tạo
 bool SoundManager::Init() {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         std::cout << "Mix_OpenAudio: " << Mix_GetError() << std::endl;
@@ -18,6 +19,7 @@ bool SoundManager::Init() {
     return true;
 }
 
+//tải nhạc
 bool SoundManager::LoadMusic(const char* file) {
     if (music) {
         Mix_FreeMusic(music);
@@ -32,6 +34,7 @@ bool SoundManager::LoadMusic(const char* file) {
     return true;
 }
 
+//tải hiệu ứng âm thanh
 bool SoundManager::LoadSoundEffect(const char* file, const std::string& id) {
     Mix_Chunk* sound = Mix_LoadWAV(file);
     if (!sound) {
@@ -43,24 +46,25 @@ bool SoundManager::LoadSoundEffect(const char* file, const std::string& id) {
     return true;
 }
 
+//phát nhạc (-1 lặp vô hạn, 0 phát một lần)
 void SoundManager::PlayMusic(int loop) {
     if (music) {
         Mix_PlayMusic(music, loop);
     }
 }
-
+//tiếp tục phát nhạc
 void SoundManager::PauseMusic() {
     Mix_PauseMusic();
 }
-
+//tạm dừng nhạc
 void SoundManager::ResumeMusic() {
     Mix_ResumeMusic();
 }
-
+//kiểm tra nhạc có tạm dừng không
 bool SoundManager::IsPaused() {
     return Mix_PausedMusic() == 1;
 }
-
+//phát hiệu ứng âm thanh dựa trên định danh
 void SoundManager::PlaySoundEffect(const std::string& id) {
     auto it = sound_effects.find(id);
     if (it != sound_effects.end()) {

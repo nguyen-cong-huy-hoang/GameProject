@@ -24,12 +24,15 @@ TextObject volume_text;
 TextObject HighScore;
 TextObject Score;
 ButtonObject music_button;
+ButtonObject restart_button;
 SliderObject volume_slider;
 float max_x_pos_fly = 0;
 float max_x_pos_dynamic = 0;
 int high_score = 0;
 int skill_activation_time = 0;
-int base_time = 0;
+int last_time_val = 0;
+Time game_timer;
+
 
 bool InitData() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -74,11 +77,14 @@ bool InitData() {
 
 void close() {
     loadBackground.Free();
+    loadGameOver.Free();
     titleText.Free();
     startText.Free();
     Options.Free();
     time_game.Free();
     volume_text.Free();
+    HighScore.Free();
+    Score.Free();
     music_button.Free();
     volume_slider.Free();
     TTF_CloseFont(font);
@@ -91,7 +97,6 @@ void close() {
     TTF_Quit();
     SDL_Quit();
 }
-
 std::vector<ThreatsObject*> MakeThreatdList() {
     std::vector<ThreatsObject*> list_threats;
 
@@ -101,7 +106,7 @@ std::vector<ThreatsObject*> MakeThreatdList() {
         if (p_threat != NULL) {
             p_threat->LoadImg("img//flying_monster.png", g_screen);
             p_threat->set_type_move(ThreatsObject::FLYING_THREAT);
-            p_threat->set_x_pos(1000*(i+1));
+            p_threat->set_x_pos(1200*(i+1));
             max_x_pos_fly = std :: max(max_x_pos_fly , p_threat->get_x_pos());
             int tile_y = (SCREEN_HEIGHT / TILE_SIZE) - 1;
             int ground_y = tile_y * TILE_SIZE;
@@ -147,7 +152,7 @@ ThreatsObject* MakeBossObject() {
     return boss_threat;
 }
 
-void ResetGame(std::vector<ThreatsObject*>& threats_list, PlayerObject& p_player, int& paused_duration, int& last_time_val, ThreatsObject*& boss_threat) {
+void ResetGame(std::vector<ThreatsObject*>& threats_list, PlayerObject& p_player,ThreatsObject*& boss_threat) {
     for (size_t i = 0; i < threats_list.size(); i++) {
         ThreatsObject* p_threat = threats_list.at(i);
         if (p_threat) {
@@ -167,15 +172,14 @@ void ResetGame(std::vector<ThreatsObject*>& threats_list, PlayerObject& p_player
         delete boss_threat;
     }
     boss_threat = MakeBossObject();
-    paused_duration = 0;
-    last_time_val = 0;
     skill_activation_time = 0;
-    base_time = SDL_GetTicks();
+    game_timer.start();
 }
 
 int main(int argc, char* argv[]) {
     bool check_continue = false;
     Time fps_timer;
+    game_timer.start();
     if (!InitData()) return -1;
     loadBackground.LoadImg("img//king.png" , g_screen);
     loadGameOver.LoadImg("img//game_over.png",g_screen);
@@ -214,7 +218,7 @@ int main(int argc, char* argv[]) {
     enum GameState { START_SCREEN, PLAYING, PAUSED , OPTIONS , GAME_OVER };
     GameState game_state = START_SCREEN;
 
-    ButtonObject restart_button;
+
     restart_button.SetRect(SCREEN_WIDTH/2 , SCREEN_HEIGHT/2 +25, 50 , 50 , "button");
     if (!restart_button.LoadImg("img//restart_button.png", g_screen)) {
         std::cout << "Failed to load restart_button: " << SDL_GetError() << std::endl;
@@ -283,9 +287,7 @@ int main(int argc, char* argv[]) {
 
     time_game.SetColor(TextObject::WHITE_TEXT);
 
-    int pause_start_time = 0;
-    int paused_duration = 0;
-    int last_time_val = 0;
+
     int last_volume = -1;
 
     bool quit = false;
@@ -312,7 +314,7 @@ int main(int argc, char* argv[]) {
                         sound_manager.PlaySoundEffect("button_click");
                         sound_manager.LoadMusic("audio//battle.mp3");
                         if (music_state) sound_manager.PlayMusic(-1);
-                        ResetGame(threats_list, p_player, paused_duration, last_time_val, boss_threat);
+                        ResetGame(threats_list, p_player, boss_threat);
                     }
 
                     SDL_Rect optionButton = { (SCREEN_WIDTH - 150) / 2, SCREEN_HEIGHT - 180, 150, 50 };
@@ -336,7 +338,7 @@ int main(int argc, char* argv[]) {
                 if (pause_button.CheckClick(g_event)) {
                     if (pause_button.IsClicked()) {
                         game_state = PAUSED;
-                        pause_start_time = SDL_GetTicks();
+                        game_timer.paused(); // Tạm dừng bộ đếm
                         sound_manager.PauseMusic();
                     }
                 }
@@ -345,7 +347,7 @@ int main(int argc, char* argv[]) {
                 if (continue_button.CheckClick(g_event) && continue_button.IsClicked()) {
                     check_continue = false;
                     game_state = PLAYING;
-                    paused_duration += SDL_GetTicks() - pause_start_time;
+                    game_timer.unpaused();
                     pause_button.ResetClicked();
                     continue_button.ResetClicked();
                     if (music_state && sound_manager.IsPaused()) {
@@ -355,7 +357,7 @@ int main(int argc, char* argv[]) {
                 }
                 if(restart_button.CheckClick(g_event))
                 {
-                    ResetGame(threats_list, p_player, paused_duration, last_time_val, boss_threat);
+                    ResetGame(threats_list, p_player, boss_threat);
                     game_state = PLAYING;
                     restart_button.ResetClicked();
                 }
@@ -363,6 +365,8 @@ int main(int argc, char* argv[]) {
                 {
                     check_continue = false;
                     game_state = START_SCREEN;
+                    game_timer.stop();
+                    last_time_val = 0;
                     home_button.ResetClicked();
                 }
                 home_button.SetRect(SCREEN_WIDTH/2 -50 , SCREEN_HEIGHT/2 + 75,50 , 50, "home");
@@ -401,6 +405,8 @@ int main(int argc, char* argv[]) {
                 home_button.SetRect(SCREEN_WIDTH/2 - 50, SCREEN_HEIGHT/2 + 75, 50, 50, "home");
                 if (home_button.CheckClick(g_event)) {
                     game_state = START_SCREEN;
+                    game_timer.stop();
+                    last_time_val = 0;
                     sound_manager.LoadMusic("audio//background_music.mp3");
                     if (music_state) sound_manager.PlayMusic(-1);
                     home_button.ResetClicked();
@@ -410,7 +416,7 @@ int main(int argc, char* argv[]) {
                     game_state = PLAYING;
                     sound_manager.LoadMusic("audio//battle.mp3");
                     if (music_state) sound_manager.PlayMusic(-1);
-                    ResetGame(threats_list, p_player, paused_duration, last_time_val, boss_threat);
+                    ResetGame(threats_list, p_player, boss_threat);
                     restart_button.ResetClicked();
                 }
             }
@@ -468,12 +474,12 @@ int main(int argc, char* argv[]) {
                std :: string high_Score = "High Score: " + std :: to_string(high_score);
                HighScore.SetText(high_Score);
                HighScore.LoadFromRenderText(font , g_screen);
-               HighScore.RenderText(g_screen , SCREEN_WIDTH/2 - 50 , SCREEN_HEIGHT/2);
+               HighScore.RenderText(g_screen , SCREEN_WIDTH/2 - 70 , SCREEN_HEIGHT/2 + 15);
 
                std :: string Score_  = "Score: " + std :: to_string(last_time_val);
                Score.SetText(Score_);
                Score.LoadFromRenderText(font , g_screen);
-               Score.RenderText(g_screen , SCREEN_WIDTH/2 - 50 , SCREEN_HEIGHT/2 + 30);
+               Score.RenderText(g_screen , SCREEN_WIDTH/2 - 70 , SCREEN_HEIGHT/2 + 45);
                home_button.Show(g_screen);
                restart_button.Show(g_screen);
 
@@ -496,10 +502,7 @@ int main(int argc, char* argv[]) {
                 boss_threat->ImpMoveType(g_screen);
                 boss_threat->DoPlayer(map_data);
 
-                int current_time = SDL_GetTicks();
-                int setting_time = current_time - base_time - paused_duration;
-                last_time_val = setting_time / 1000;
-
+                last_time_val = game_timer.get_ticks() / 1000;
 
                 if (p_player.get_check_time_skill()) {
                     if (skill_activation_time == 0) {
@@ -575,8 +578,11 @@ int main(int argc, char* argv[]) {
                         bool bCol3 = SDLCommonFunc ::CheckCollisionPlayer(rect_player , rect_boss);
                         if (bCol1 || bCol2 || bCol3) {
                             sound_manager.PlaySoundEffect("game_over");
+                            sound_manager.LoadMusic("audio/background_music.mp3");
+                            if (music_state) sound_manager.PlayMusic(-1);
                             high_score = std :: max(last_time_val , high_score);
                             game_state = GAME_OVER;
+                            game_timer.stop();
                         }
                     }
                 }
